@@ -1,0 +1,38 @@
+---
+title: "R for Graph, Network and Trees"
+subtitle: "Applications in Biomedical Research"
+author: "Xiaotao Shen 2025/4/7"
+institute: "Lee Kong Chian School of Medicine, NTU"
+date: "2025/4/7"
+format: 
+  pptx:
+    reference-doc: ppt_template.pptx
+    slide-level: 2
+    fig-width: 7
+    fig-height: 5
+    fig-dpi: 300
+editor: visual
+---
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished presentation. To learn more about Quarto presentations see <https://quarto.org/docs/presentations/>.
+
+## Bullets
+
+When you click the **Render** button a document will be generated that includes:
+
+-   Content authored with markdown
+-   Output from executable code
+
+## Code
+
+When you click the **Render** button a presentation will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+1 + 1
+```
+
+```{r}
+plot(1)
+```
