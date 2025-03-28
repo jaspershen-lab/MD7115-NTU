@@ -14,25 +14,75 @@ format:
 editor: visual
 ---
 
-## Quarto
+## About the class
 
-Quarto enables you to weave together content and executable code into a finished presentation. To learn more about Quarto presentations see <https://quarto.org/docs/presentations/>.
+-   **Instructor**: Xiaotao Shen (https://www.shen-lab.org/)
 
-## Bullets
+-   **Email**: xiaotao.shen\@ntu.edu.stg
 
-When you click the **Render** button a document will be generated that includes:
+-   **WhatsApp**: +1 5712679283
 
--   Content authored with markdown
--   Output from executable code
+-   **Github Repo**: https://github.com/jaspershen-lab/MD7115-NTU
 
-## Code
+-   **Reference**:
 
-When you click the **Render** button a presentation will be generated that includes both content and the output of embedded code. You can embed code like this:
+1.  [R for Data Science](https://r4ds.had.co.nz/)
+2.  [R Graphics Cookbook](https://r-graphics.org/)
+3.  [Network Analysis with R](https://www.amazon.com/Network-Analysis-R-Use/dp/3319238822)
 
-```{r}
-1 + 1
+## Introduction
+
+In this course, we will learn how to use R to analyze and visualize data in the form of graphs, networks and trees. We will cover the following topics.
+
+1.  What is a graph, network and tree?
+
+2.  Their applications in biomedical research
+
+3.  How to use R to analyze and visualize them
+
+## Preparation
+
+We need to install some R packages before the class.
+
+Some packages are in Bionconductor, so we need to install `BiocManager` first.
+
+```r
+if (!requireNamespace("BiocManager", quietly = TRUE)){
+install.packages("BiocManager")
+}
 ```
 
-```{r}
-plot(1)
+## Preparation
+
+`tidyverse` is a collection of R packages designed for data science, and it includes `ggplot2`, which is a basic graph package for network and tree in R.
+
+```r
+if (!requireNamespace("tidyverse", quietly = TRUE)){
+install.packages("tidyverse")
+}
 ```
+
+## Preparation
+
+Some specific packages for graph, network and tree analysis.
+
+```r
+install.packages("igraph")
+install.packages("ggraph")
+install.packages("tidygraph")
+install.packages("ggnetwork")
+BiocManager::install("ggtree")
+BiocManager::install("treeio")
+BiocManager::install("ggtreeExtra")
+```
+
+## What is a graph?
+
+A graph is a collection of nodes (vertices) and edges (links) that connect pairs of nodes.
+
+A small undirected graph with numbered nodes.
+
+![](images/graph.png)
+
+
+
