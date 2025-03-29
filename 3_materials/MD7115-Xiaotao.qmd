@@ -84,5 +84,38 @@ A small undirected graph with numbered nodes.
 
 ![](images/graph.png)
 
+## Example 1
 
+![Shen, et al. Nature Biomedical Engineering, 2024](images/ED_FIG7.jpg)
+
+## Example 1
+
+### What's the network?
+
+**Nodes**: 
+
+- Wearable data: Step, HR, and CGM (continuous glucose monitoring) data
+
+- Omics data: Proteins, metabolites, and lipids
+
+
+**Edges**: 
+
+- Lagged correlations
+
+- Blue: negative correlations
+
+- Red: positive correlations
+
+![Shen, et al. Nature Biomedical Engineering, 2024](images/ED_FIG7.jpg)
+
+
+## Read the data
+
+
+## More references
+
+1. [Morden Statistics for Morden Biology](https://web.stanford.edu/class/bios221/book/10-chap.html#combining-phylogenetic-trees-into-a-data-analysis)
+
+2. [Network Analysis with R](https://www.amazon.com/Network-Analysis-R-Use/dp/3319238822)
 
