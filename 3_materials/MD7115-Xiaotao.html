@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>MD7115: R for Graph, Network and Trees</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="  Xiaotao Shen   Assistant Professor / Shen lab      shen-lab.org    xiaotao.shen@ntu.edu.sg " />
+    <meta name="date" content="2025-03-29" />
+    <script src="MD7115-Xiaotao_files/header-attrs-2.29/header-attrs.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="my-theme.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, title-slide
+
+.title[
+# MD7115: R for Graph, Network and Trees
+]
+.subtitle[
+## Applications in Biomedical Research
+]
+.author[
+### <br><br>Xiaotao Shen <br> Assistant Professor / <a href="http://shen-lab.org/">Shen lab</a> <br> <a href="http://shen-lab.org"> <i class="fa fa-home fa-fw"></i>  shen-lab.org</a><br> <a href="mailto:xiaotao.shen@ntu.edu.sg"><i class="fa fa-paper-plane fa-fw"></i>  xiaotao.shen@ntu.edu.sg</a><br>
+]
+.institute[
+### Lee Kong Chian School of Medicine, NTU Singapore
+]
+.date[
+### 2025-03-29
+]
+
+---
+
+
+
+layout: true
+background-image: url(images/lkc_logo.png)
+background-position: 100% 0%
+background-size: 20%
+  
+&lt;div class="my-footer"&gt;&lt;span&gt;Xiaotao Shen/www.shen-lab.org&lt;/span&gt;&lt;/div&gt; 
+
+---
+
+
+
+
+
+
+# About the class
+
+-   **Instructor**: Xiaotao Shen (https://www.shen-lab.org/)
+
+-   **Email**: xiaotao.shen@ntu.edu.stg
+
+-   **WhatsApp**: +1 5712679283
+
+-   **Github Repo**: https://github.com/jaspershen-lab/MD7115-NTU
+
+-   **Reference**:
+
+1.  [R for Data Science](https://r4ds.had.co.nz/)
+2.  [R Graphics Cookbook](https://r-graphics.org/)
+3.  [Network Analysis with R](https://www.amazon.com/Network-Analysis-R-Use/dp/3319238822)
+
+---
+
+# Introduction
+
+In this course, we will learn how to use R to analyze and visualize data in the form of graphs, networks and trees. We will cover the following topics.
+
+1. What is a graph, network and tree?
+
+2. Their applications in biomedical research
+
+3. How to use R to analyze and visualize them
+
+4. Examples
+
+---
+
+# Preparation
+
+We need to install some R packages before the class.
+
+Some packages are in Bionconductor, so we need to install `BiocManager` first.
+
+
+``` r
+if (!requireNamespace("BiocManager", quietly = TRUE)){
+install.packages("BiocManager")
+}
+```
+
+`tidyverse` is a collection of R packages designed for data science, and it includes `ggplot2`, which is a basic graph package for network and tree in R.
+
+
+``` r
+if (!requireNamespace("tidyverse", quietly = TRUE)){
+install.packages("tidyverse")
+}
+```
+
+---
+
+# Preparation
+
+Some specific packages for graph and network.
+
+
+``` r
+if (!requireNamespace("igraph", quietly = TRUE)){
+install.packages("igraph")
+}
+if(!requireNamespace("ggraph", quietly = TRUE)){
+install.packages("ggraph")
+}
+if(!requireNamespace("tidygraph", quietly = TRUE)){
+install.packages("tidygraph")
+}
+if(!requireNamespace("ggnetwork", quietly = TRUE)){
+install.packages("ggnetwork")
+}
+```
+
+---
+
+# Preparation
+
+Some specific packages for tree analysis.
+
+
+``` r
+if(!requireNamespace("ggtree", quietly = TRUE)){
+BiocManager::install("ggtree")  
+}
+if(!requireNamespace("treeio", quietly = TRUE)){
+BiocManager::install("treeio")  
+}
+if(!requireNamespace("ggtreeExtra", quietly = TRUE)){
+BiocManager::install("ggtreeExtra")  
+}
+```
+
+---
+
+# What is a graph?
+
+.pull-left[
+A graph is a collection of nodes (vertices) and edges (links) that connect pairs of nodes.
+
+A small undirected graph with numbered nodes.
+]
+
+
+.pull-right[
+&lt;img src="images/graph.png" alt="a graph" width="70%"&gt;
+]
+
+
+
+---
+
+# Example 1
+
+&lt;div style="display: flex; justify-content: center; align-items: center;"&gt;
+    &lt;img src="images/ED_FIG7.jpg" alt="Description of the image" width="55%"&gt;
+&lt;/div&gt;
+
+&gt; [Shen, et al. Nature Biomedical Engineering, 2024](https://www.shen-lab.org/publication/Multi-omics%20microsampling%20for%20the%20profiling%20of%20lifestyle-associated%20changes%20in%20health.pdf)
+
+---
+
+# Example 1
+
+What's the network?
+
+.pull-left[
+**Nodes**:
+
+-   Wearable data: Step, HR, and CGM (continuous glucose monitoring) data
+
+-   Omics data: Proteins, metabolites, and lipids
+
+**Edges**:
+
+-   Lagged correlations
+
+-   Blue: negative correlations
+
+-   Red: positive correlations
+]
+
+.pull-right[
+&lt;div style="display: flex; justify-content: center; align-items: center;"&gt;
+    &lt;img src="images/ED_FIG7.jpg" alt="Description of the image" width="100%"&gt;
+&lt;/div&gt;
+]
+
+
+---
+
+# Read the data
+
+
+``` r
+# node data
+if (!require(readr)) {
+  install.packages("readr")
+}
+node_data =
+  readr::read_csv(
+    "https://raw.githubusercontent.com/jaspershen-lab/MD7115-NTU/main/2_demo_data/example_node_data.csv"
+  )
+```
+
+---
+
+# Read the data
+
+
+``` r
+#edge data
+edge_data =
+  readr::read_csv(
+    "https://raw.githubusercontent.com/jaspershen-lab/MD7115-NTU/main/2_demo_data/example_edge_data.csv"
+  )
+```
+
+---
+
+# Node data
+
+.pull-left[
+
+``` r
+dim(node_data)
+```
+
+```
+## [1] 319   4
+```
+
+``` r
+head(node_data)
+```
+
+```
+## # A tibble: 6 × 4
+##   node        class    mol_name class2        
+##   &lt;chr&gt;       &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;         
+## 1 CGM         cgm      CGM      wearable      
+## 2 cortisol_1  cortisol Cortisol internal-omics
+## 3 cytokine_34 cytokine IP10     internal-omics
+## 4 cytokine_40 cytokine TNFB     internal-omics
+## 5 cytokine_20 cytokine IL15     internal-omics
+## 6 cytokine_4  cytokine TGFA     internal-omics
+```
+]
+
+
+.pull-right[
+
+319 nodes
+
+- node: The ID of the node, character
+
+- class: The class of the node, character
+
+- mol_name: The name of the molecule, character
+
+- Other: all the other attributes of the edge
+]
+
+---
+
+# Edge data
+
+.pull-left[
+
+``` r
+dim(edge_data)
+```
+
+```
+## [1] 337  11
+```
+
+``` r
+head(edge_data)
+```
+
+```
+## # A tibble: 6 × 11
+##   from  to         global_cor lagged_cor
+##   &lt;chr&gt; &lt;chr&gt;           &lt;dbl&gt;      &lt;dbl&gt;
+## 1 CGM   cytokine_…      0.274      0.292
+## 2 CGM   cytokine_…      0.308      0.308
+## 3 CGM   cytokine_…      0.327      0.327
+## 4 CGM   cytokine_4      0.331      0.343
+## 5 CGM   cytokine_6      0.343      0.355
+## 6 CGM   lipid_113      -0.118     -0.324
+## # ℹ 7 more variables: shift_time &lt;dbl&gt;,
+## #   global_cor_p &lt;dbl&gt;,
+## #   lagged_cor_p &lt;dbl&gt;,
+## #   global_cor_p_adjust &lt;dbl&gt;,
+## #   lagged_cor_p_adjust &lt;dbl&gt;,
+## #   class1 &lt;chr&gt;, class &lt;chr&gt;
+```
+]
+
+
+.pull-right[
+
+337 edges
+
+- from: The ID of the source node, character
+
+- to: The ID of the target node, character
+
+- Other: all the other attributes of the edge
+]
+
+---
+
+# Create a graph
+
+
+``` r
+library(igraph)
+library(tidyverse)
+library(ggraph)
+library(tidygraph)
+graph_data =
+  tidygraph::tbl_graph(nodes = node_data,
+                       edges = edge_data,
+                       directed = FALSE) %&gt;%
+  dplyr::mutate(Degree = centrality_degree(mode = 'all'))
+```
+
+`centrality_degree` is from the package `tidygraph` to calcualte the degree of the nodes.
+
+
+``` r
+?centrality_degree
+```
+
+---
+
+# Create a graph
+
+
+``` r
+graph_data
+```
+
+```
+## # A tbl_graph: 319 nodes and 337 edges
+## #
+## # An undirected simple graph with 1 component
+## #
+## # Node Data: 319 × 5 (active)
+##    node        class    mol_name class2         Degree
+##    &lt;chr&gt;       &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;           &lt;dbl&gt;
+##  1 CGM         cgm      CGM      wearable           20
+##  2 cortisol_1  cortisol Cortisol internal-omics      2
+##  3 cytokine_34 cytokine IP10     internal-omics      1
+##  4 cytokine_40 cytokine TNFB     internal-omics      1
+##  5 cytokine_20 cytokine IL15     internal-omics      1
+##  6 cytokine_4  cytokine TGFA     internal-omics      2
+##  7 cytokine_6  cytokine FLT3L    internal-omics      1
+##  8 cytokine_12 cytokine IL10     internal-omics      2
+##  9 cytokine_17 cytokine PDGFAA   internal-omics      1
+## 10 cytokine_3  cytokine EOTAXIN  internal-omics      1
+## # ℹ 309 more rows
+## #
+## # Edge Data: 337 × 11
+##    from    to global_cor lagged_cor shift_time global_cor_p lagged_cor_p
+##   &lt;int&gt; &lt;int&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;
+## 1     1     3      0.274      0.292        -40      0.0107       0.00607
+## 2     1     4      0.308      0.308          0      0.00393      0.00393
+## 3     1     5      0.327      0.327          0      0.00211      0.00211
+## # ℹ 334 more rows
+## # ℹ 4 more variables: global_cor_p_adjust &lt;dbl&gt;, lagged_cor_p_adjust &lt;dbl&gt;,
+## #   class1 &lt;chr&gt;, class &lt;chr&gt;
+```
+
+---
+
+# Visualize the graph
+
+.pull-left[
+
+``` r
+ggraph(graph_data, layout = 'kk') +
+  geom_edge_link() +
+  geom_node_point(
+  )
+```
+]
+
+.pull-right[
+![](MD7115-Xiaotao_files/figure-html/unnamed-chunk-15-1.png)&lt;!-- --&gt;
+]
+
+---
+
+# Another layout
+
+.pull-left[
+
+``` r
+ggraph(graph_data, layout = 'fr') +
+  geom_edge_link() +
+  geom_node_point(
+  )
+```
+]
+
+.pull-right[
+![](MD7115-Xiaotao_files/figure-html/unnamed-chunk-17-1.png)&lt;!-- --&gt;
+]
+
+---
+
+# Modification: more information in the network
+
+.pull-left[
+
+``` r
+plot =  
+ggraph(graph_data, layout = 'kk') +
+  geom_edge_link(aes(
+    color = lagged_cor,
+    width = -log(lagged_cor_p_adjust, 10)
+  ),
+  alpha = 0.5,
+  show.legend = TRUE) +
+  geom_node_point(
+    aes(fill = class, size = Degree),
+    shape = 21,
+    alpha = 0.5,
+    show.legend = TRUE
+  )
+plot
+```
+]
+
+.pull-right[
+![](MD7115-Xiaotao_files/figure-html/unnamed-chunk-19-1.png)&lt;!-- --&gt;
+]
+
+
+---
+
+# Modification: more information in the network
+
+.pull-left[
+
+``` r
+plot =
+  plot +
+  shadowtext::geom_shadowtext(
+    aes(
+      x = x,
+      y = y,
+      label = ifelse(class2 == "wearable", mol_name, NA),
+      color = class
+    ),
+    bg.color = "white",
+    size = 5,
+    show.legend = FALSE
+  )
+plot
+```
+]
+
+.pull-right[
+![](MD7115-Xiaotao_files/figure-html/unnamed-chunk-21-1.png)&lt;!-- --&gt;
+]
+
+
+---
+
+# Modification: more information in the network
+
+Set colors for nodes
+
+
+``` r
+class_color =
+  c(
+    "lipidomics" = ggsci::pal_aaas()(10)[1],
+    "metabolomics" = ggsci::pal_aaas()(10)[3],
+    "cytokine" = ggsci::pal_aaas()(10)[4],
+    "total_protein" = ggsci::pal_aaas()(10)[5],
+    "cortisol" = ggsci::pal_aaas()(10)[6],
+    "metabolic_panel" = ggsci::pal_aaas()(10)[7],
+    "proteomics" = ggsci::pal_aaas()(10)[8]
+  )
+
+wearable_color =
+  c(
+    "sleep" = ggsci::pal_d3()(n = 10)[2],
+    "cgm"  = ggsci::pal_d3()(n = 10)[6],
+    "hr" = ggsci::pal_d3()(n = 10)[7],
+    "step"  = ggsci::pal_d3()(n = 10)[9],
+    "food" = ggsci::pal_d3()(n = 10)[10]
+  )
+```
+
+---
+
+# Modification: more information in the network
+
+.pull-left[
+
+``` r
+plot = 
+  plot +
+  scale_size_continuous(range = c(3, 10)) +
+  scale_fill_manual(values = c(class_color, wearable_color)) +
+  scale_color_manual(values = c(class_color, wearable_color)) +
+  scale_edge_width_continuous(range = c(0.3, 2)) +
+  ggraph::scale_edge_color_gradientn(colours = c(alpha("#3B4992FF", 0.7), "white", alpha("#EE0000FF", 0.7))) +
+  ggraph::theme_graph() +
+  theme(
+    plot.background = element_rect(fill = "transparent", color = NA),
+    panel.background = element_rect(fill = "transparent", color = NA),
+    legend.position = "right",
+    legend.background = element_rect(fill = "transparent", color = NA)
+  )
+plot
+```
+]
+
+.pull-right[
+![](MD7115-Xiaotao_files/figure-html/unnamed-chunk-24-1.png)&lt;!-- --&gt;
+]
+
+
+---
+
+# Change to circle layout
+
+
+``` r
+g = graph_data
+library(igraph)
+library(ggraph)
+
+V(g)$type = bipartite_mapping(g)$type
+
+coords =
+  create_layout(g, layout = "bipartite") %&gt;%
+  dplyr::select(node, class, mol_name, class2, x, y)
+
+head(coords)
+```
+
+```
+## # A tibble: 6 × 6
+##   node        class    mol_name class2             x     y
+##   &lt;chr&gt;       &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;dbl&gt;
+## 1 CGM         cgm      CGM      wearable         9.5     1
+## 2 cortisol_1  cortisol Cortisol internal-omics 175       0
+## 3 cytokine_34 cytokine IP10     internal-omics   1       0
+## 4 cytokine_40 cytokine TNFB     internal-omics   6       0
+## 5 cytokine_20 cytokine IL15     internal-omics   9       0
+## 6 cytokine_4  cytokine TGFA     internal-omics  56       0
+```
+
+---
+
+# Change to circle layout
+
+.pull-left[
+
+``` r
+coords$y[coords$class2 == "internal-omics"] = 1
+coords$y[coords$class2 == "wearable"] = -0.5
+
+coords$y[coords$class == "metabolomics"] = 1
+coords$y[coords$class == "lipidomics"] = 0.5
+coords$y[coords$class == "proteomics"] = 0
+coords$y[coords$class == "cytokine"] = 0
+coords$y[coords$class == "metabolic_panel"] = 0
+coords$y[coords$class == "total_protein"] = 0
+
+coords =
+  coords %&gt;%
+  dplyr::select(x, y) %&gt;%
+  dplyr::mutate(
+    theta = x / (max(x) + 1) * 2 * pi,
+    r = y + 1,
+    x = r * cos(theta),
+    y = r * sin(theta)
+  )
+```
+]
+
+.pull-right[
+
+``` r
+head(coords)
+```
+
+```
+## # A tibble: 6 × 4
+##        x       y  theta     r
+##    &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
+## 1  0.491  0.0939 0.189    0.5
+## 2 -1.89  -0.663  3.48     2  
+## 3  1.00   0.0199 0.0199   1  
+## 4  0.993  0.119  0.119    1  
+## 5  0.984  0.178  0.179    1  
+## 6  0.442  0.897  1.11     1
+```
+]
+
+
+---
+
+# Change to circle layout
+
+.pull-left[
+
+``` r
+my_graph =
+  create_layout(
+    graph = g,
+    layout = "manual",
+    x = coords$x,
+    y = coords$y
+  )
+```
+]
+
+.pull-right[
+
+``` r
+head(my_graph)
+```
+
+```
+## # A tibble: 6 × 11
+##        x       y circular node        class    mol_name class2      Degree type 
+##    &lt;dbl&gt;   &lt;dbl&gt; &lt;lgl&gt;    &lt;chr&gt;       &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;        &lt;dbl&gt; &lt;lgl&gt;
+## 1  0.491  0.0939 FALSE    CGM         cgm      CGM      wearable        20 FALSE
+## 2 -1.89  -0.663  FALSE    cortisol_1  cortisol Cortisol internal-o…      2 TRUE 
+## 3  1.00   0.0199 FALSE    cytokine_34 cytokine IP10     internal-o…      1 TRUE 
+## 4  0.993  0.119  FALSE    cytokine_40 cytokine TNFB     internal-o…      1 TRUE 
+## 5  0.984  0.178  FALSE    cytokine_20 cytokine IL15     internal-o…      1 TRUE 
+## 6  0.442  0.897  FALSE    cytokine_4  cytokine TGFA     internal-o…      2 TRUE 
+## # ℹ 2 more variables: .ggraph.orig_index &lt;int&gt;, .ggraph.index &lt;int&gt;
+```
+]
+
+---
+
+# Visualize the circle layout
+
+.pull-left[
+
+``` r
+plot =
+  ggraph(my_graph, layout = 'bipartite') +
+  geom_edge_diagonal(aes(
+    color = lagged_cor,
+    width = -log(lagged_cor_p_adjust, 10)
+  ),
+  alpha = 0.5,
+  show.legend = TRUE) +
+  geom_node_point(
+    aes(fill = class, size = Degree),
+    shape = 21,
+    alpha = 0.5,
+    show.legend = TRUE
+  )
+```
+]
+
+.pull-right[
+
+``` r
+plot
+```
+
+![](MD7115-Xiaotao_files/figure-html/unnamed-chunk-31-1.png)&lt;!-- --&gt;
+]
+
+---
+
+# Visualize the circle layout
+
+.pull-left[
+
+``` r
+plot =
+  plot +
+  shadowtext::geom_shadowtext(
+    aes(
+      x = x,
+      y = y,
+      label = ifelse(class2 == "wearable", mol_name, NA),
+      color = class
+    ),
+    bg.color = "white",
+    size = 5,
+    show.legend = FALSE
+  ) +
+  shadowtext::geom_shadowtext(
+    aes(
+      x = x,
+      y = y,
+      label = ifelse(class2 == "wearable", NA, mol_name),
+      color = class,
+      nudge_y = ifelse(class2 == "wearable", "inward", 'outward'),
+      angle = -((-node_angle(x, y) + 90) %% 180) + 90
+    ),
+    bg.color = "white",
+    size = 2,
+    show.legend = FALSE,
+    check_overlap = TRUE
+  )
+```
+]
+
+.pull-right[
+
+``` r
+plot
+```
+
+![](MD7115-Xiaotao_files/figure-html/unnamed-chunk-33-1.png)&lt;!-- --&gt;
+]
+
+---
+
+# Visualize the circle layout
+
+
+``` r
+plot =
+  plot +
+  scale_size_continuous(range = c(3, 10)) +
+  scale_fill_manual(values = c(class_color, wearable_color)) +
+  scale_color_manual(values = c(class_color, wearable_color)) +
+  scale_edge_width_continuous(range = c(0.3, 2)) +
+  ggraph::scale_edge_color_gradientn(colours = c(alpha("#3B4992FF", 0.7), "white", alpha("#EE0000FF", 0.7))) +
+  ggraph::theme_graph() +
+  theme(
+    plot.background = element_rect(fill = "transparent", color = NA),
+    panel.background = element_rect(fill = "transparent", color = NA),
+    legend.position = "bottom",
+    legend.background = element_rect(fill = "transparent", color = NA)
+  ) 
+```
+
+---
+
+# Visualize the circle layout
+
+.pull-left[
+
+``` r
+plot
+```
+]
+
+.pull-right[
+![](MD7115-Xiaotao_files/figure-html/unnamed-chunk-36-1.png)&lt;!-- --&gt;
+]
+
+---
+
+# Save the plot
+
+We need to install `extrafont` to save the plot.
+
+
+``` r
+if (!require(extrafont)) {
+  install.packages("extrafont")
+}
+```
+
+
+``` r
+extrafont::loadfonts()
+ggsave(plot, filename = "network.pdf", width = 9.5, height = 10)
+```
+
+
+# Example 2
+
+
+---
+
+# More references
+
+1.  [Morden Statistics for Morden Biology](https://web.stanford.edu/class/bios221/book/10-chap.html#combining-phylogenetic-trees-into-a-data-analysis)
+
+2.  [Network Analysis with R](https://www.amazon.com/Network-Analysis-R-Use/dp/3319238822)
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"ratio": "16:9",
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

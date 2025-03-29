@@ -1,3 +1,8 @@
+.title-slide {
+  background-image: linear-gradient(rgba(27, 37, 48, 0.6), rgba(7, 37, 48, 0.9)), url('images/title_page_background.png');
+  background-size: cover;
+}
+
 .title-slide a, a > code {
     color: #aadff2;
     text-decoration: none;

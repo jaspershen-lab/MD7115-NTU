@@ -81,6 +81,26 @@ my_graph <-
     # node.position = coords
   )
 
+class_color =
+  c(
+    "lipidomics" = ggsci::pal_aaas()(10)[1],
+    "metabolomics" = ggsci::pal_aaas()(10)[3],
+    "cytokine" = ggsci::pal_aaas()(10)[4],
+    "total_protein" = ggsci::pal_aaas()(10)[5],
+    "cortisol" = ggsci::pal_aaas()(10)[6],
+    "metabolic_panel" = ggsci::pal_aaas()(10)[7],
+    "proteomics" = ggsci::pal_aaas()(10)[8]
+  )
+
+wearable_color =
+  c(
+    "sleep" = ggsci::pal_d3()(n = 10)[2],
+    "cgm"  = ggsci::pal_d3()(n = 10)[6],
+    "hr" = ggsci::pal_d3()(n = 10)[7],
+    "step"  = ggsci::pal_d3()(n = 10)[9],
+    "food" = ggsci::pal_d3()(n = 10)[10]
+  )
+
 
 plot <-
   ggraph(my_graph, layout = 'bipartite') +
