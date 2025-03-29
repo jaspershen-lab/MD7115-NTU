@@ -46,7 +46,7 @@ We need to install some R packages before the class.
 
 Some packages are in Bionconductor, so we need to install `BiocManager` first.
 
-```r
+```{r, echo=TRUE, eval = TRUE}
 if (!requireNamespace("BiocManager", quietly = TRUE)){
 install.packages("BiocManager")
 }
@@ -56,7 +56,7 @@ install.packages("BiocManager")
 
 `tidyverse` is a collection of R packages designed for data science, and it includes `ggplot2`, which is a basic graph package for network and tree in R.
 
-```r
+```{r, echo=TRUE, eval = TRUE}
 if (!requireNamespace("tidyverse", quietly = TRUE)){
 install.packages("tidyverse")
 }
@@ -66,14 +66,46 @@ install.packages("tidyverse")
 
 Some specific packages for graph, network and tree analysis.
 
-```r
+
+```{r, echo=TRUE, eval = TRUE}
+if (!requireNamespace("igraph", quietly = TRUE)){
 install.packages("igraph")
+}
+if(!requireNamespace("ggraph", quietly = TRUE)){
 install.packages("ggraph")
+}
+```
+
+
+## Preparation
+
+Some specific packages for graph, network and tree analysis.
+
+
+```{r, echo=TRUE, eval = TRUE}
+if(!requireNamespace("tidygraph", quietly = TRUE)){
 install.packages("tidygraph")
+}
+if(!requireNamespace("ggnetwork", quietly = TRUE)){
 install.packages("ggnetwork")
-BiocManager::install("ggtree")
-BiocManager::install("treeio")
-BiocManager::install("ggtreeExtra")
+}
+```
+
+## Preparation
+
+Some specific packages for graph, network and tree analysis.
+
+
+```{r, echo=TRUE, eval = TRUE}
+if(!requireNamespace("ggtree", quietly = TRUE)){
+BiocManager::install("ggtree")  
+}
+if(!requireNamespace("treeio", quietly = TRUE)){
+BiocManager::install("treeio")  
+}
+if(!requireNamespace("ggtreeExtra", quietly = TRUE)){
+BiocManager::install("ggtreeExtra")  
+}
 ```
 
 ## What is a graph?
@@ -111,6 +143,35 @@ A small undirected graph with numbered nodes.
 
 
 ## Read the data
+
+```{r, echo=TRUE, eval = TRUE}
+## node data
+if (!require(readr)) {
+  install.packages("readr")
+}
+node_data <-
+  readr::read_csv(
+    "https://raw.githubusercontent.com/jaspershen-lab/MD7115-NTU/main/2_demo_data/example_node_data.csv"
+  )
+```
+
+
+## Read the data
+
+```{r, echo=TRUE, eval = TRUE}
+##edge data
+edge_data <-
+  readr::read_csv(
+    "https://raw.githubusercontent.com/jaspershen-lab/MD7115-NTU/main/2_demo_data/example_edge_data.csv"
+  )
+```
+
+## Node data
+
+```{r, echo=TRUE, eval = TRUE}
+head(node_data)
+```
+
 
 
 ## More references
