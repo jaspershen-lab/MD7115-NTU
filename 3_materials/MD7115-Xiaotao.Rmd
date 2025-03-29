@@ -161,7 +161,7 @@ BiocManager::install("ggtreeExtra")
 
 ---
 
-# What is a graph?
+# What is a graph/network?
 
 .pull-left[
 A graph is a collection of nodes (vertices) and edges (links) that connect pairs of nodes.
@@ -174,11 +174,429 @@ A small undirected graph with numbered nodes.
 <img src="images/graph.png" alt="a graph" width="70%">
 ]
 
+---
+
+# Biological networks
+
+-   Protein-protein interaction networks
+
+-   Metabolic networks
+
+-   Correlation network
+
+-   Gene regulatory networks
+
+-   Disease networks
+
+-   Microbe-metabolite network
+
+-   Drug-target networks
+
+-   Signaling networks
 
 
 ---
 
-# Example 1
+# Protein-protein interaction networks
+
+.pull-left[
+
+Protein-protein interaction networks (PPIN) are mathematical representations of the physical contacts between proteins in the cell. 
+
+* Node: protein
+
+* Edge: interaction between proteins
+]
+
+.pull-right[
+<div style="display: flex; justify-content: center; align-items: center;">
+    <img src="images/ppi_network.png" alt="Description of the image" width="100%">
+</div>
+
+> Jeong et al. Nature 2001
+
+]
+
+
+---
+
+# Metabolic networks
+
+.pull-left[
+
+A metabolic network is the complete set of metabolic and physical processes that determine the physiological and biochemical properties of a cell. As such, these networks comprise the chemical reactions of metabolism, the metabolic pathways, as well as the regulatory interactions that guide these reactions.
+
+
+* Node: protein (enzyme and metabolites)
+
+* Edge: chemical reactions
+
+]
+
+.pull-right[
+<div style="display: flex; justify-content: center; align-items: center;">
+    <img src="images/metabolic_network.png" alt="Description of the image" width="100%">
+</div>
+
+> https://en.wikipedia.org/wiki/Metabolic_network
+
+]
+
+---
+
+# Correlation networks
+
+
+.pull-left[
+
+Correlation networks are a way to represent and analyze the relationships between different biological entities (like genes, proteins, or metabolites) based on how their levels or activity change together across various samples or conditions. 
+
+
+* Node: Each node in the network represents a biological entity (e.g., a gene, a protein, or a metabolite). 
+
+* Edge: Edges connect nodes and represent the correlation between the entities they represent. The strength or weight of the edge indicates the strength of the correlation. 
+
+Gene Co-expression Networks
+
+]
+
+.pull-right[
+<div style="display: flex; justify-content: center; align-items: center;">
+    <img src="images/correlation_network.png" alt="Description of the image" width="100%">
+</div>
+
+> Zhou et al. Cell Host & Microbe 2024
+
+]
+
+
+
+---
+
+# Some important properties of a network
+
+* Degree Distribution:
+
+The distribution of the number of connections (or "degree") each node has in the network. 
+
+* Shortest Paths:
+
+The shortest path between two nodes in a network is the smallest number of edges that must be traversed to get from one node to the other.
+
+* Centrality:
+
+Measures the importance or influence of a node within the network, often based on the number of connections, shortest paths, or intermediate positions. 
+
+* Betweenness Centrality:
+
+A measure of how often a node appears on the shortest path between two other nodes in the network.
+
+
+---
+
+# Degree Distribution
+
+
+.pull-left[
+What is the degree of nodes?
+
+Degree is the number of edges connected to a node.
+
+In this network, node 3's degree is 3. node 1's degree is 1.
+
+]
+
+
+.pull-right[
+<img src="images/graph.png" alt="a graph" width="70%">
+]
+
+---
+
+# Scale-free networks
+
+
+.pull-left[
+
+A "scale-free network" refers to a network where the degree distribution, which is the distribution of the number of connections (or links) each node has, follows a power law. 
+
+This means that a small number of nodes (the "hubs") have a very large number of connections, while the majority of nodes have relatively few connections. 
+
+In biological network, scale-free networks are common, with a few highly connected nodes (hubs) and many nodes with only a few connections.
+
+These hubs are often important for the overall structure and function of the network.
+
+]
+
+
+.pull-right[
+<img src="images/scale_free_network.png" alt="a graph" width="70%">
+
+> https://link.springer.com/article/10.1007/s10142-022-00907-y
+
+]
+
+
+---
+
+# Graph/Network in R
+
+* `igraph`
+
+A R package for creating, manipulating, and analyzing network data. 
+
+[https://igraph.org/](https://igraph.org/)
+
+* `ggraph`
+
+A R package for creating network visualizations using `ggplot2`.
+
+[https://ggraph.data-imaginist.com/](https://ggraph.data-imaginist.com/)
+
+* `tidygraph`
+
+A R package for tidy manipulation of graph data.
+
+[https://tidygraph.data-imaginist.com/](https://tidygraph.data-imaginist.com/)
+
+---
+
+# Create a network: from the data.frame
+
+```{r, echo=TRUE, eval = TRUE}
+library(igraph)
+library(tidyverse)
+library(ggraph)
+library(tidygraph)
+
+##demo data
+
+head(highschool)
+
+```
+
+---
+
+# Create a network: from the data.frame
+
+```{r, echo=TRUE, eval = TRUE}
+graph = as_tbl_graph(highschool)
+
+class(graph)
+graph
+```
+
+
+---
+
+# Create a network: from the node and edge data
+
+```{r, echo=TRUE, eval = TRUE}
+node_data =
+  tibble::tibble(
+    id = c("A", "B", "C", "D", "E"),
+    label = c("Alice", "Bob", "Charlie", "David", "Eve"),
+    sex = c("F", "M", "M", "F", "F")
+  )
+
+edge_data =
+  tibble::tibble(
+    from = c("A", "A", "B", "C", "D", "E"),
+    to = c("B", "C", "D", "D", "E", "A"),
+    relationship = c("friend", "neighbor", "friend", "neighbor", "friend", "friend")
+  )
+```
+
+---
+
+# Create a network: from the node and edge data
+
+```{r, echo=TRUE, eval = TRUE}
+node_data
+edge_data
+```
+
+
+---
+
+# Create a network: from the node and edge data
+
+```{r, echo=TRUE, eval = TRUE}
+graph2 =
+  tbl_graph(nodes = node_data, edges = edge_data, directed = FALSE)
+graph2
+```
+
+---
+
+# Network visualization
+
+.pull-left[
+```{r, echo=TRUE, eval = FALSE}
+ggraph(graph2, layout = 'kk') +
+  geom_edge_link() +
+  geom_node_point()
+```
+]
+
+.pull-right[
+```{r, echo=FALSE, eval = TRUE}
+ggraph(graph2, layout = 'kk') +
+  geom_edge_link() +
+  geom_node_point()
+```
+]
+
+
+
+---
+
+# Layout
+
+.pull-left[
+```{r, echo=TRUE, eval = FALSE}
+ggraph(graph2, layout = 'fr') +
+  geom_edge_link() +
+  geom_node_point()
+```
+]
+
+.pull-right[
+```{r, echo=FALSE, eval = TRUE}
+ggraph(graph2, layout = 'fr') +
+  geom_edge_link() +
+  geom_node_point()
+```
+]
+
+
+---
+
+# Layout
+
+.pull-left[
+```{r, echo=TRUE, eval = FALSE}
+ggraph(graph2, layout = 'stress') +
+  geom_edge_link() +
+  geom_node_point()
+```
+]
+
+.pull-right[
+```{r, echo=FALSE, eval = TRUE}
+ggraph(graph2, layout = 'stress') +
+  geom_edge_link() +
+  geom_node_point()
+```
+]
+
+
+
+---
+
+# Layout
+
+.pull-left[
+```{r, echo=TRUE, eval = FALSE}
+ggraph(graph2, layout = 'linear') +
+   geom_edge_arc() +
+  geom_node_point()
+```
+]
+
+.pull-right[
+```{r, echo=FALSE, eval = TRUE}
+ggraph(graph2, layout = 'linear') +
+   geom_edge_arc() +
+  geom_node_point()
+```
+]
+
+
+---
+
+# Layout
+
+.pull-left[
+```{r, echo=TRUE, eval = FALSE}
+ggraph(graph2, layout = 'linear', circular = TRUE) +
+   geom_edge_arc() +
+  geom_node_point() +
+   coord_fixed()
+```
+]
+
+.pull-right[
+```{r, echo=FALSE, eval = TRUE}
+ggraph(graph2, layout = 'linear', circular = TRUE) +
+   geom_edge_arc() +
+  geom_node_point() +
+   coord_fixed()
+```
+]
+
+
+# Node and edge attributes
+
+.pull-left[
+```{r, echo=TRUE, eval = FALSE}
+ggraph(graph2, layout = 'linear', circular = TRUE) +
+  geom_edge_arc(aes(color = relationship)) +
+  geom_node_point(aes(color = sex),
+                  size = 5) +
+  coord_fixed()
+```
+]
+
+.pull-right[
+```{r, echo=FALSE, eval = TRUE}
+ggraph(graph2, layout = 'linear', circular = TRUE) +
+  geom_edge_arc(aes(color = relationship)) +
+  geom_node_point(aes(color = sex),
+                  size = 5) +
+  coord_fixed()
+```
+]
+
+---
+
+# Add labels
+
+.pull-left[
+```{r, echo=TRUE, eval = FALSE}
+ggraph(graph2, layout = 'linear', circular = TRUE) +
+  geom_edge_arc(aes(color = relationship)) +
+  geom_node_point(aes(color = sex),
+                  size = 5) +
+  geom_node_text(aes(label = label),
+                 repel = TRUE) +
+  coord_fixed()
+```
+]
+
+.pull-right[
+```{r, echo=FALSE, eval = TRUE}
+ggraph(graph2, layout = 'linear', circular = TRUE) +
+  geom_edge_arc(aes(color = relationship)) +
+  geom_node_point(aes(color = sex),
+                  size = 5) +
+    geom_node_text(aes(label = label),
+                 repel = TRUE) +
+  coord_fixed()
+```
+]
+
+---
+
+# Case study
+
+## 1. Correlation network
+
+## 2. GO similarity network
+
+---
+
+# Example 1: Correlation network
 
 <div style="display: flex; justify-content: center; align-items: center;">
     <img src="images/ED_FIG7.jpg" alt="Description of the image" width="55%">
@@ -188,7 +606,7 @@ A small undirected graph with numbered nodes.
 
 ---
 
-# Example 1
+# Example 1: Correlation network
 
 What's the network?
 
@@ -391,7 +809,8 @@ ggraph(graph_data, layout = 'kk') +
     shape = 21,
     alpha = 0.5,
     show.legend = TRUE
-  )
+  ) +
+  coord_fixed()
 plot
 ```
 ]
@@ -736,8 +1155,450 @@ extrafont::loadfonts()
 ggsave(plot, filename = "network.pdf", width = 9.5, height = 10)
 ```
 
+---
 
-# Example 2
+# Example 2: GO similarity network
+
+What's the network?
+
+.pull-left[
+**Nodes**:
+
+- Enriched GO terms
+
+**Edges**:
+
+- Similarity
+
+]
+
+.pull-right[
+<div style="display: flex; justify-content: center; align-items: center;">
+    <img src="images/similarity_network_plot.jpg" alt="Description of the image" width="100%">
+</div>
+]
+
+
+---
+
+# Load libraries
+
+```{r, echo=TRUE, eval = TRUE}
+if (!require(remotes)) {
+  install.packages("remotes")
+}
+if (!require(r4projects)) {
+  remotes::install_github("jaspershen/r4projects")
+}
+if (!require(simplifyEnrichment)) {
+  BiocManager::install("simplifyEnrichment")
+}
+if (!require(tibble)) {
+  install.packages("tibble")
+}
+library(ggraph)
+library(tidygraph)
+library(igraph)
+library(tidyverse)
+```
+
+
+---
+
+# Read the data
+
+```{r, echo=TRUE, eval = TRUE}
+pathway_result =
+  readr::read_csv(
+    "https://raw.githubusercontent.com/jaspershen-lab/MD7115-NTU/main/2_demo_data/pathway_result.csv"
+  )
+head(pathway_result)
+```
+
+---
+
+# Compute GO term similarity matrices
+
+```{r, echo=TRUE, eval = TRUE}
+bp_sim_matrix =
+  simplifyEnrichment::GO_similarity(go_id = pathway_result$ID[pathway_result$ONTOLOGY == "BP"],
+                                    ont = "BP",
+                                    measure = "Wang") %>%
+  as.data.frame() %>%
+  tibble::rownames_to_column(var = "name1") %>%
+  tidyr::pivot_longer(cols = -name1,
+                      names_to = "name2",
+                      values_to = "sim") %>%
+  dplyr::filter(name1 != name2) %>%
+  dplyr::filter(sim > 0.5)
+head(bp_sim_matrix)
+```
+
+---
+
+# Compute GO term similarity matrices
+
+```{r, echo=TRUE, eval = TRUE}
+# Create a unique identifier for each GO term pair
+# This helps remove duplicate pairs (A-B and B-A are the same relationship)
+name = apply(bp_sim_matrix, 1, function(x) {
+  paste(sort(x[1:2]), collapse = "_")
+})
+
+# Remove duplicate GO term pairs while keeping the data structure
+bp_sim_matrix =
+  bp_sim_matrix %>%
+  dplyr::mutate(name = name) %>%
+  dplyr::arrange(name) %>%
+  dplyr::distinct(name, .keep_all = TRUE) %>%
+  dplyr::select(-name)
+```
+
+---
+
+# Compute GO term similarity matrices
+
+```{r, echo=TRUE, eval = TRUE}
+mf_sim_matrix =
+  simplifyEnrichment::GO_similarity(go_id = pathway_result$ID[pathway_result$ONTOLOGY == "MF"],
+                                    ont = "MF",
+                                    measure = "Wang") %>%
+  as.data.frame() %>%
+  tibble::rownames_to_column(var = "name1") %>%
+  tidyr::pivot_longer(cols = -name1,
+                      names_to = "name2",
+                      values_to = "sim") %>%
+  dplyr::filter(name1 != name2) %>%
+  dplyr::filter(sim > 0.5)
+head(mf_sim_matrix)
+```
+
+---
+
+# Compute GO term similarity matrices
+
+```{r, echo=TRUE, eval = TRUE}
+name = apply(mf_sim_matrix, 1, function(x) {
+  paste(sort(x[1:2]), collapse = "_")
+})
+
+mf_sim_matrix =
+  mf_sim_matrix %>%
+  dplyr::mutate(name = name) %>%
+  dplyr::arrange(name) %>%
+  dplyr::distinct(name, .keep_all = TRUE) %>%
+  dplyr::select(-name)
+```
+
+---
+
+# Compute GO term similarity matrices
+
+```{r, echo=TRUE, eval = TRUE}
+cc_sim_matrix =
+  simplifyEnrichment::GO_similarity(go_id = pathway_result$ID[pathway_result$ONTOLOGY == "CC"],
+                                    ont = "CC",
+                                    measure = "Wang") %>%
+  as.data.frame() %>%
+  tibble::rownames_to_column(var = "name1") %>%
+  tidyr::pivot_longer(cols = -name1,
+                      names_to = "name2",
+                      values_to = "sim") %>%
+  dplyr::filter(name1 != name2) %>%
+  dplyr::filter(sim > 0.5)
+head(cc_sim_matrix)
+```
+
+---
+
+# Compute GO term similarity matrices
+
+```{r, echo=TRUE, eval = TRUE}
+name = apply(cc_sim_matrix, 1, function(x) {
+  paste(sort(x[1:2]), collapse = "_")
+})
+
+cc_sim_matrix =
+  cc_sim_matrix %>%
+  dplyr::mutate(name = name) %>%
+  dplyr::arrange(name) %>%
+  dplyr::distinct(name, .keep_all = TRUE) %>%
+  dplyr::select(-name)
+```
+
+---
+
+# Final similarity matrix
+
+```{r, echo=TRUE, eval = TRUE}
+# Combine all three ontology similarity matrices into one
+sim_matrix =
+  rbind(bp_sim_matrix, mf_sim_matrix, cc_sim_matrix) %>%
+  tibble::as_tibble()
+
+# Preview the combined similarity matrix
+head(sim_matrix)
+```
+
+---
+
+# Graph data: edge data
+
+```{r, echo=TRUE, eval = TRUE}
+edge_data =
+  sim_matrix %>%
+  # Rename columns to standard network terminology
+  dplyr::rename(from = name1, to = name2) %>%
+  # Keep only strong relationships (similarity > 0.5)
+  dplyr::filter(sim > 0.5)
+
+# Display sample of edge data
+head(edge_data)
+```
+
+---
+
+# Graph data: node data
+
+```{r, echo=TRUE, eval = TRUE}
+# Create node data from pathway results
+# Nodes represent individual GO terms
+node_data =
+  pathway_result %>%
+  dplyr::select(ID, everything()) %>%
+  dplyr::rename(node = ID)
+
+# Display sample of node data
+head(node_data)
+```
+
+---
+
+# Create a graph data structure
+
+```{r, echo=TRUE, eval = TRUE}
+# Create a graph data structure using tidygraph
+# Combines node and edge information into a single object
+graph_data =
+  tidygraph::tbl_graph(nodes = node_data,
+                       edges = edge_data,
+                       directed = FALSE) %>%
+  # Calculate node degree (number of connections) as a centrality measure
+  dplyr::mutate(degree = tidygraph::centrality_degree())
+graph_data
+```
+
+---
+
+# Community/module detection
+
+```{r, echo=TRUE, eval = TRUE}
+# Detect subnetworks/communities within the graph
+# Edge betweenness clustering algorithm identifies modular structures
+subnetwork =
+  igraph::cluster_edge_betweenness(graph = graph_data, weights = abs(edge_attr(graph_data, "sim")))
+
+# Create module labels for each detected community
+cluster =
+  paste("GO_Module", as.character(igraph::membership(subnetwork)), sep = "_")
+head(cluster)
+```
+
+---
+
+# Add module information to the graph data
+
+```{r, echo=TRUE, eval = TRUE}
+# Add module information to the graph data
+graph_data =
+  graph_data %>%
+  tidygraph::mutate(module = cluster)
+graph_data
+```
+
+---
+
+# Extract node attributes with module assignments
+
+```{r, echo=TRUE, eval = TRUE}
+result_with_module =
+  igraph::vertex_attr(graph_data) %>%
+  do.call(cbind, .) %>%
+  tibble::as_tibble() %>%
+  # Convert p.adjust to numeric for proper sorting
+  dplyr::mutate(p.adjust = as.numeric(p.adjust)) %>%
+  # Sort by module and significance
+  dplyr::arrange(module, p.adjust)
+
+# Further organize results by ontology type, module, and significance
+result_with_module =
+  result_with_module %>%
+  dplyr::arrange(ONTOLOGY, module, p.adjust)
+```
+
+---
+
+# Extract node attributes with module assignments
+
+```{r, echo=TRUE, eval = TRUE}
+# Calculate the number of GO terms in each module
+module_content_number =
+  result_with_module %>%
+  dplyr::count(module) %>%
+  dplyr::rename(module_content_number = n)
+
+# Add module size information to results
+result_with_module =
+  result_with_module %>%
+  dplyr::left_join(module_content_number, by = "module")
+head(result_with_module)
+```
+
+---
+
+# Add module size information to graph data
+
+```{r, echo=TRUE, eval = TRUE}
+graph_data =
+  graph_data %>%
+  # Activate nodes for manipulation
+  activate(what = "nodes") %>%
+  dplyr::left_join(module_content_number, by = "module")
+
+# Display the final graph data structure
+graph_data
+```
+
+---
+
+# Select representative labels for each module
+
+```{r, echo=TRUE, eval = TRUE}
+# Choose the most significant GO term with highest count in each module
+cluster_label_module =
+  igraph::as_data_frame(graph_data, what = "vertices") %>%
+  dplyr::group_by(module) %>%
+  dplyr::filter(p.adjust == min(p.adjust) &
+                  Count == max(Count)) %>%
+  dplyr::slice_head(n = 1) %>%
+  pull(Description)
+
+# Get all GO term descriptions for reference
+cluster_label_all =
+  igraph::as_data_frame(graph_data, what = "vertices")$Description
+```
+
+---
+
+# Visualization of GO term clusters
+
+```{r, echo=TRUE, eval = TRUE}
+# Create network visualization
+plot =
+  graph_data %>%
+  ggraph(layout = 'fr', circular = FALSE) +
+  geom_edge_link(
+    aes(width = sim),
+    strength = 1,
+    color = "black",
+    alpha = 1,
+    show.legend = FALSE
+  ) +
+  geom_node_point(
+    aes(fill = module, size = -log(p.adjust, 10)),
+    shape = 21,
+    alpha = 1,
+    show.legend = FALSE
+  ) +
+  coord_fixed()
+```
+
+
+---
+
+# Visualization of GO term clusters
+
+```{r, echo=TRUE, eval = TRUE}
+plot =
+  plot +
+  geom_node_text(aes(
+    x = x,
+    y = y,
+    label = ifelse(Description %in% cluster_label_module, Description, NA)
+  ),
+  size = 3,
+  repel = TRUE)
+```
+
+---
+
+# Visualization of GO term clusters
+
+```{r, echo=TRUE, eval = TRUE}
+plot =
+  plot +
+  guides(fill = guide_legend(ncol = 1)) +
+  scale_edge_width_continuous(range = c(0.1, 2)) +
+  scale_size_continuous(range = c(1, 7))
+```
+
+---
+
+# Visualization of GO term clusters
+
+```{r, echo=TRUE, eval = TRUE}
+plot =
+  plot +
+  ggraph::theme_graph() +
+  theme(
+    plot.background = element_rect(fill = "transparent", color = NA),
+    panel.background = element_rect(fill = "transparent", color = NA),
+    legend.position = "right",
+    legend.background = element_rect(fill = "transparent", color = NA)
+  )
+```
+
+---
+
+# Visualization of GO term clusters
+
+```{r, echo=TRUE, eval = TRUE}
+plot
+```
+
+---
+
+# Save the plot
+
+```{r, echo=TRUE, eval = FALSE}
+extrafont::loadfonts()
+ggplot2::ggsave(plot,
+                filename = "similarity_network_plot.pdf",
+                width = 9,
+                height = 7)
+```
+
+
+---
+
+---
+
+# Example: GO similarity network
+
+What's the tree?
+
+.pull-left[
+
+The phylogenetics tree of microbiome data. 
+
+]
+
+.pull-right[
+<div style="display: flex; justify-content: center; align-items: center;">
+    <img src="images/cell_host_microbe.png" alt="Description of the image" width="100%">
+</div>
+]
+
 
 
 ---

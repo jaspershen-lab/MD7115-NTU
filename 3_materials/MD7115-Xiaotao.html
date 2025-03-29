@@ -144,7 +144,7 @@ BiocManager::install("ggtreeExtra")
 
 ---
 
-# What is a graph?
+# What is a graph/network?
 
 .pull-left[
 A graph is a collection of nodes (vertices) and edges (links) that connect pairs of nodes.
@@ -157,11 +157,487 @@ A small undirected graph with numbered nodes.
 &lt;img src="images/graph.png" alt="a graph" width="70%"&gt;
 ]
 
+---
+
+# Biological networks
+
+-   Protein-protein interaction networks
+
+-   Metabolic networks
+
+-   Correlation network
+
+-   Gene regulatory networks
+
+-   Disease networks
+
+-   Microbe-metabolite network
+
+-   Drug-target networks
+
+-   Signaling networks
 
 
 ---
 
-# Example 1
+# Protein-protein interaction networks
+
+.pull-left[
+
+Protein-protein interaction networks (PPIN) are mathematical representations of the physical contacts between proteins in the cell. 
+
+* Node: protein
+
+* Edge: interaction between proteins
+]
+
+.pull-right[
+&lt;div style="display: flex; justify-content: center; align-items: center;"&gt;
+    &lt;img src="images/ppi_network.png" alt="Description of the image" width="100%"&gt;
+&lt;/div&gt;
+
+&gt; Jeong et al. Nature 2001
+
+]
+
+
+---
+
+# Metabolic networks
+
+.pull-left[
+
+A metabolic network is the complete set of metabolic and physical processes that determine the physiological and biochemical properties of a cell. As such, these networks comprise the chemical reactions of metabolism, the metabolic pathways, as well as the regulatory interactions that guide these reactions.
+
+
+* Node: protein (enzyme and metabolites)
+
+* Edge: chemical reactions
+
+]
+
+.pull-right[
+&lt;div style="display: flex; justify-content: center; align-items: center;"&gt;
+    &lt;img src="images/metabolic_network.png" alt="Description of the image" width="100%"&gt;
+&lt;/div&gt;
+
+&gt; https://en.wikipedia.org/wiki/Metabolic_network
+
+]
+
+---
+
+# Correlation networks
+
+
+.pull-left[
+
+Correlation networks are a way to represent and analyze the relationships between different biological entities (like genes, proteins, or metabolites) based on how their levels or activity change together across various samples or conditions. 
+
+
+* Node: Each node in the network represents a biological entity (e.g., a gene, a protein, or a metabolite). 
+
+* Edge: Edges connect nodes and represent the correlation between the entities they represent. The strength or weight of the edge indicates the strength of the correlation. 
+
+Gene Co-expression Networks
+
+]
+
+.pull-right[
+&lt;div style="display: flex; justify-content: center; align-items: center;"&gt;
+    &lt;img src="images/correlation_network.png" alt="Description of the image" width="100%"&gt;
+&lt;/div&gt;
+
+&gt; Zhou et al. Cell Host &amp; Microbe 2024
+
+]
+
+
+
+---
+
+# Some important properties of a network
+
+* Degree Distribution:
+
+The distribution of the number of connections (or "degree") each node has in the network. 
+
+* Shortest Paths:
+
+The shortest path between two nodes in a network is the smallest number of edges that must be traversed to get from one node to the other.
+
+* Centrality:
+
+Measures the importance or influence of a node within the network, often based on the number of connections, shortest paths, or intermediate positions. 
+
+* Betweenness Centrality:
+
+A measure of how often a node appears on the shortest path between two other nodes in the network.
+
+
+---
+
+# Degree Distribution
+
+
+.pull-left[
+What is the degree of nodes?
+
+Degree is the number of edges connected to a node.
+
+In this network, node 3's degree is 3. node 1's degree is 1.
+
+]
+
+
+.pull-right[
+&lt;img src="images/graph.png" alt="a graph" width="70%"&gt;
+]
+
+---
+
+# Scale-free networks
+
+
+.pull-left[
+
+A "scale-free network" refers to a network where the degree distribution, which is the distribution of the number of connections (or links) each node has, follows a power law. 
+
+This means that a small number of nodes (the "hubs") have a very large number of connections, while the majority of nodes have relatively few connections. 
+
+In biological network, scale-free networks are common, with a few highly connected nodes (hubs) and many nodes with only a few connections.
+
+These hubs are often important for the overall structure and function of the network.
+
+]
+
+
+.pull-right[
+&lt;img src="images/scale_free_network.png" alt="a graph" width="70%"&gt;
+
+&gt; https://link.springer.com/article/10.1007/s10142-022-00907-y
+
+]
+
+
+---
+
+# Graph/Network in R
+
+* `igraph`
+
+A R package for creating, manipulating, and analyzing network data. 
+
+[https://igraph.org/](https://igraph.org/)
+
+* `ggraph`
+
+A R package for creating network visualizations using `ggplot2`.
+
+[https://ggraph.data-imaginist.com/](https://ggraph.data-imaginist.com/)
+
+* `tidygraph`
+
+A R package for tidy manipulation of graph data.
+
+[https://tidygraph.data-imaginist.com/](https://tidygraph.data-imaginist.com/)
+
+---
+
+# Create a network: from the data.frame
+
+
+``` r
+library(igraph)
+library(tidyverse)
+library(ggraph)
+library(tidygraph)
+
+##demo data
+
+head(highschool)
+```
+
+```
+##   from to year
+## 1    1 14 1957
+## 2    1 15 1957
+## 3    1 21 1957
+## 4    1 54 1957
+## 5    1 55 1957
+## 6    2 21 1957
+```
+
+---
+
+# Create a network: from the data.frame
+
+
+``` r
+graph = as_tbl_graph(highschool)
+
+class(graph)
+```
+
+```
+## [1] "tbl_graph" "igraph"
+```
+
+``` r
+graph
+```
+
+```
+## # A tbl_graph: 70 nodes and 506 edges
+## #
+## # A directed multigraph with 1 component
+## #
+## # Node Data: 70 × 0 (active)
+## #
+## # Edge Data: 506 × 3
+##    from    to  year
+##   &lt;int&gt; &lt;int&gt; &lt;dbl&gt;
+## 1     1    13  1957
+## 2     1    14  1957
+## 3     1    20  1957
+## # ℹ 503 more rows
+```
+
+
+---
+
+# Create a network: from the node and edge data
+
+
+``` r
+node_data =
+  tibble::tibble(
+    id = c("A", "B", "C", "D", "E"),
+    label = c("Alice", "Bob", "Charlie", "David", "Eve"),
+    sex = c("F", "M", "M", "F", "F")
+  )
+
+edge_data =
+  tibble::tibble(
+    from = c("A", "A", "B", "C", "D", "E"),
+    to = c("B", "C", "D", "D", "E", "A"),
+    relationship = c("friend", "neighbor", "friend", "neighbor", "friend", "friend")
+  )
+```
+
+---
+
+# Create a network: from the node and edge data
+
+
+``` r
+node_data
+```
+
+```
+## # A tibble: 5 × 3
+##   id    label   sex  
+##   &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;
+## 1 A     Alice   F    
+## 2 B     Bob     M    
+## 3 C     Charlie M    
+## 4 D     David   F    
+## 5 E     Eve     F
+```
+
+``` r
+edge_data
+```
+
+```
+## # A tibble: 6 × 3
+##   from  to    relationship
+##   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;       
+## 1 A     B     friend      
+## 2 A     C     neighbor    
+## 3 B     D     friend      
+## 4 C     D     neighbor    
+## 5 D     E     friend      
+## 6 E     A     friend
+```
+
+
+---
+
+# Create a network: from the node and edge data
+
+
+``` r
+graph2 =
+  tbl_graph(nodes = node_data, edges = edge_data, directed = FALSE)
+graph2
+```
+
+```
+## # A tbl_graph: 5 nodes and 6 edges
+## #
+## # An undirected simple graph with 1 component
+## #
+## # Node Data: 5 × 3 (active)
+##   id    label   sex  
+##   &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;
+## 1 A     Alice   F    
+## 2 B     Bob     M    
+## 3 C     Charlie M    
+## 4 D     David   F    
+## 5 E     Eve     F    
+## #
+## # Edge Data: 6 × 3
+##    from    to relationship
+##   &lt;int&gt; &lt;int&gt; &lt;chr&gt;       
+## 1     1     2 friend      
+## 2     1     3 neighbor    
+## 3     2     4 friend      
+## # ℹ 3 more rows
+```
+
+---
+
+# Network visualization
+
+.pull-left[
+
+``` r
+ggraph(graph2, layout = 'kk') +
+  geom_edge_link() +
+  geom_node_point()
+```
+]
+
+.pull-right[
+![](MD7115-Xiaotao_files/figure-html/unnamed-chunk-11-1.png)&lt;!-- --&gt;
+]
+
+
+
+---
+
+# Layout
+
+.pull-left[
+
+``` r
+ggraph(graph2, layout = 'fr') +
+  geom_edge_link() +
+  geom_node_point()
+```
+]
+
+.pull-right[
+![](MD7115-Xiaotao_files/figure-html/unnamed-chunk-13-1.png)&lt;!-- --&gt;
+]
+
+
+---
+
+# Layout
+
+.pull-left[
+
+``` r
+ggraph(graph2, layout = 'stress') +
+  geom_edge_link() +
+  geom_node_point()
+```
+]
+
+.pull-right[
+![](MD7115-Xiaotao_files/figure-html/unnamed-chunk-15-1.png)&lt;!-- --&gt;
+]
+
+
+
+---
+
+# Layout
+
+.pull-left[
+
+``` r
+ggraph(graph2, layout = 'linear') +
+   geom_edge_arc() +
+  geom_node_point()
+```
+]
+
+.pull-right[
+![](MD7115-Xiaotao_files/figure-html/unnamed-chunk-17-1.png)&lt;!-- --&gt;
+]
+
+
+---
+
+# Layout
+
+.pull-left[
+
+``` r
+ggraph(graph2, layout = 'linear', circular = TRUE) +
+   geom_edge_arc() +
+  geom_node_point() +
+   coord_fixed()
+```
+]
+
+.pull-right[
+![](MD7115-Xiaotao_files/figure-html/unnamed-chunk-19-1.png)&lt;!-- --&gt;
+]
+
+
+# Node and edge attributes
+
+.pull-left[
+
+``` r
+ggraph(graph2, layout = 'linear', circular = TRUE) +
+  geom_edge_arc(aes(color = relationship)) +
+  geom_node_point(aes(color = sex),
+                  size = 5) +
+  coord_fixed()
+```
+]
+
+.pull-right[
+![](MD7115-Xiaotao_files/figure-html/unnamed-chunk-21-1.png)&lt;!-- --&gt;
+]
+
+---
+
+# Add labels
+
+.pull-left[
+
+``` r
+ggraph(graph2, layout = 'linear', circular = TRUE) +
+  geom_edge_arc(aes(color = relationship)) +
+  geom_node_point(aes(color = sex),
+                  size = 5) +
+  geom_node_text(aes(label = label),
+                 repel = TRUE) +
+  coord_fixed()
+```
+]
+
+.pull-right[
+![](MD7115-Xiaotao_files/figure-html/unnamed-chunk-23-1.png)&lt;!-- --&gt;
+]
+
+---
+
+# Case study
+
+## 1. Correlation network
+
+## 2. GO similarity network
+
+---
+
+# Example 1: Correlation network
 
 &lt;div style="display: flex; justify-content: center; align-items: center;"&gt;
     &lt;img src="images/ED_FIG7.jpg" alt="Description of the image" width="55%"&gt;
@@ -171,7 +647,7 @@ A small undirected graph with numbered nodes.
 
 ---
 
-# Example 1
+# Example 1: Correlation network
 
 What's the network?
 
@@ -400,7 +876,7 @@ ggraph(graph_data, layout = 'kk') +
 ]
 
 .pull-right[
-![](MD7115-Xiaotao_files/figure-html/unnamed-chunk-15-1.png)&lt;!-- --&gt;
+![](MD7115-Xiaotao_files/figure-html/unnamed-chunk-34-1.png)&lt;!-- --&gt;
 ]
 
 ---
@@ -418,7 +894,7 @@ ggraph(graph_data, layout = 'fr') +
 ]
 
 .pull-right[
-![](MD7115-Xiaotao_files/figure-html/unnamed-chunk-17-1.png)&lt;!-- --&gt;
+![](MD7115-Xiaotao_files/figure-html/unnamed-chunk-36-1.png)&lt;!-- --&gt;
 ]
 
 ---
@@ -441,13 +917,14 @@ ggraph(graph_data, layout = 'kk') +
     shape = 21,
     alpha = 0.5,
     show.legend = TRUE
-  )
+  ) +
+  coord_fixed()
 plot
 ```
 ]
 
 .pull-right[
-![](MD7115-Xiaotao_files/figure-html/unnamed-chunk-19-1.png)&lt;!-- --&gt;
+![](MD7115-Xiaotao_files/figure-html/unnamed-chunk-38-1.png)&lt;!-- --&gt;
 ]
 
 
@@ -476,7 +953,7 @@ plot
 ]
 
 .pull-right[
-![](MD7115-Xiaotao_files/figure-html/unnamed-chunk-21-1.png)&lt;!-- --&gt;
+![](MD7115-Xiaotao_files/figure-html/unnamed-chunk-40-1.png)&lt;!-- --&gt;
 ]
 
 
@@ -535,7 +1012,7 @@ plot
 ]
 
 .pull-right[
-![](MD7115-Xiaotao_files/figure-html/unnamed-chunk-24-1.png)&lt;!-- --&gt;
+![](MD7115-Xiaotao_files/figure-html/unnamed-chunk-43-1.png)&lt;!-- --&gt;
 ]
 
 
@@ -686,7 +1163,7 @@ plot =
 plot
 ```
 
-![](MD7115-Xiaotao_files/figure-html/unnamed-chunk-31-1.png)&lt;!-- --&gt;
+![](MD7115-Xiaotao_files/figure-html/unnamed-chunk-50-1.png)&lt;!-- --&gt;
 ]
 
 ---
@@ -732,7 +1209,7 @@ plot =
 plot
 ```
 
-![](MD7115-Xiaotao_files/figure-html/unnamed-chunk-33-1.png)&lt;!-- --&gt;
+![](MD7115-Xiaotao_files/figure-html/unnamed-chunk-52-1.png)&lt;!-- --&gt;
 ]
 
 ---
@@ -769,7 +1246,7 @@ plot
 ]
 
 .pull-right[
-![](MD7115-Xiaotao_files/figure-html/unnamed-chunk-36-1.png)&lt;!-- --&gt;
+![](MD7115-Xiaotao_files/figure-html/unnamed-chunk-55-1.png)&lt;!-- --&gt;
 ]
 
 ---
@@ -791,8 +1268,677 @@ extrafont::loadfonts()
 ggsave(plot, filename = "network.pdf", width = 9.5, height = 10)
 ```
 
+---
 
-# Example 2
+# Example 2: GO similarity network
+
+What's the network?
+
+.pull-left[
+**Nodes**:
+
+- Enriched GO terms
+
+**Edges**:
+
+- Similarity
+
+]
+
+.pull-right[
+&lt;div style="display: flex; justify-content: center; align-items: center;"&gt;
+    &lt;img src="images/similarity_network_plot.jpg" alt="Description of the image" width="100%"&gt;
+&lt;/div&gt;
+]
+
+
+---
+
+# Load libraries
+
+
+``` r
+if (!require(remotes)) {
+  install.packages("remotes")
+}
+if (!require(r4projects)) {
+  remotes::install_github("jaspershen/r4projects")
+}
+if (!require(simplifyEnrichment)) {
+  BiocManager::install("simplifyEnrichment")
+}
+if (!require(tibble)) {
+  install.packages("tibble")
+}
+library(ggraph)
+library(tidygraph)
+library(igraph)
+library(tidyverse)
+```
+
+
+---
+
+# Read the data
+
+
+``` r
+pathway_result =
+  readr::read_csv(
+    "https://raw.githubusercontent.com/jaspershen-lab/MD7115-NTU/main/2_demo_data/pathway_result.csv"
+  )
+head(pathway_result)
+```
+
+```
+## # A tibble: 6 × 10
+##   ONTOLOGY ID    Description GeneRatio BgRatio   pvalue p.adjust   qvalue geneID
+##   &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt;     &lt;chr&gt;      &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;chr&gt; 
+## 1 MF       GO:0… transmembr… 14/114    86/206… 3.39e-17 7.46e-15 4.57e-15 ENSG0…
+## 2 MF       GO:0… growth fac… 16/114    143/20… 8.29e-17 9.12e-15 5.59e-15 ENSG0…
+## 3 MF       GO:0… transmembr… 12/114    69/206… 2.92e-15 2.14e-13 1.31e-13 ENSG0…
+## 4 BP       GO:0… wound heal… 23/112    495/20… 1.85e-15 4.95e-12 3.27e-12 ENSG0…
+## 5 MF       GO:0… protein ty… 12/114    151/20… 4.27e-11 2.35e- 9 1.44e- 9 ENSG0…
+## 6 MF       GO:0… cytokine b… 11/114    144/20… 4.39e-10 1.93e- 8 1.18e- 8 ENSG0…
+## # ℹ 1 more variable: Count &lt;dbl&gt;
+```
+
+---
+
+# Compute GO term similarity matrices
+
+
+``` r
+bp_sim_matrix =
+  simplifyEnrichment::GO_similarity(go_id = pathway_result$ID[pathway_result$ONTOLOGY == "BP"],
+                                    ont = "BP",
+                                    measure = "Wang") %&gt;%
+  as.data.frame() %&gt;%
+  tibble::rownames_to_column(var = "name1") %&gt;%
+  tidyr::pivot_longer(cols = -name1,
+                      names_to = "name2",
+                      values_to = "sim") %&gt;%
+  dplyr::filter(name1 != name2) %&gt;%
+  dplyr::filter(sim &gt; 0.5)
+head(bp_sim_matrix)
+```
+
+```
+## # A tibble: 6 × 3
+##   name1      name2        sim
+##   &lt;chr&gt;      &lt;chr&gt;      &lt;dbl&gt;
+## 1 GO:0042060 GO:0061041 0.616
+## 2 GO:0042060 GO:0090303 0.504
+## 3 GO:0042060 GO:0007596 0.552
+## 4 GO:1903034 GO:1903036 0.801
+## 5 GO:1903034 GO:0061041 0.820
+## 6 GO:1903034 GO:0090303 0.657
+```
+
+---
+
+# Compute GO term similarity matrices
+
+
+``` r
+# Create a unique identifier for each GO term pair
+# This helps remove duplicate pairs (A-B and B-A are the same relationship)
+name = apply(bp_sim_matrix, 1, function(x) {
+  paste(sort(x[1:2]), collapse = "_")
+})
+
+# Remove duplicate GO term pairs while keeping the data structure
+bp_sim_matrix =
+  bp_sim_matrix %&gt;%
+  dplyr::mutate(name = name) %&gt;%
+  dplyr::arrange(name) %&gt;%
+  dplyr::distinct(name, .keep_all = TRUE) %&gt;%
+  dplyr::select(-name)
+```
+
+---
+
+# Compute GO term similarity matrices
+
+
+``` r
+mf_sim_matrix =
+  simplifyEnrichment::GO_similarity(go_id = pathway_result$ID[pathway_result$ONTOLOGY == "MF"],
+                                    ont = "MF",
+                                    measure = "Wang") %&gt;%
+  as.data.frame() %&gt;%
+  tibble::rownames_to_column(var = "name1") %&gt;%
+  tidyr::pivot_longer(cols = -name1,
+                      names_to = "name2",
+                      values_to = "sim") %&gt;%
+  dplyr::filter(name1 != name2) %&gt;%
+  dplyr::filter(sim &gt; 0.5)
+head(mf_sim_matrix)
+```
+
+```
+## # A tibble: 6 × 3
+##   name1      name2        sim
+##   &lt;chr&gt;      &lt;chr&gt;      &lt;dbl&gt;
+## 1 GO:0019199 GO:0004714 0.854
+## 2 GO:0019199 GO:0004713 0.654
+## 3 GO:0019838 GO:0019955 0.605
+## 4 GO:0004714 GO:0019199 0.854
+## 5 GO:0004714 GO:0004713 0.727
+## 6 GO:0004713 GO:0019199 0.654
+```
+
+---
+
+# Compute GO term similarity matrices
+
+
+``` r
+name = apply(mf_sim_matrix, 1, function(x) {
+  paste(sort(x[1:2]), collapse = "_")
+})
+
+mf_sim_matrix =
+  mf_sim_matrix %&gt;%
+  dplyr::mutate(name = name) %&gt;%
+  dplyr::arrange(name) %&gt;%
+  dplyr::distinct(name, .keep_all = TRUE) %&gt;%
+  dplyr::select(-name)
+```
+
+---
+
+# Compute GO term similarity matrices
+
+
+``` r
+cc_sim_matrix =
+  simplifyEnrichment::GO_similarity(go_id = pathway_result$ID[pathway_result$ONTOLOGY == "CC"],
+                                    ont = "CC",
+                                    measure = "Wang") %&gt;%
+  as.data.frame() %&gt;%
+  tibble::rownames_to_column(var = "name1") %&gt;%
+  tidyr::pivot_longer(cols = -name1,
+                      names_to = "name2",
+                      values_to = "sim") %&gt;%
+  dplyr::filter(name1 != name2) %&gt;%
+  dplyr::filter(sim &gt; 0.5)
+head(cc_sim_matrix)
+```
+
+```
+## # A tibble: 6 × 3
+##   name1      name2        sim
+##   &lt;chr&gt;      &lt;chr&gt;      &lt;dbl&gt;
+## 1 GO:0005775 GO:0043202 0.841
+## 2 GO:0005775 GO:0005788 0.725
+## 3 GO:0005775 GO:0005796 0.725
+## 4 GO:0031983 GO:0034774 0.591
+## 5 GO:0031983 GO:0060205 0.719
+## 6 GO:0043202 GO:0005775 0.841
+```
+
+---
+
+# Compute GO term similarity matrices
+
+
+``` r
+name = apply(cc_sim_matrix, 1, function(x) {
+  paste(sort(x[1:2]), collapse = "_")
+})
+
+cc_sim_matrix =
+  cc_sim_matrix %&gt;%
+  dplyr::mutate(name = name) %&gt;%
+  dplyr::arrange(name) %&gt;%
+  dplyr::distinct(name, .keep_all = TRUE) %&gt;%
+  dplyr::select(-name)
+```
+
+---
+
+# Final similarity matrix
+
+
+``` r
+# Combine all three ontology similarity matrices into one
+sim_matrix =
+  rbind(bp_sim_matrix, mf_sim_matrix, cc_sim_matrix) %&gt;%
+  tibble::as_tibble()
+
+# Preview the combined similarity matrix
+head(sim_matrix)
+```
+
+```
+## # A tibble: 6 × 3
+##   name1      name2        sim
+##   &lt;chr&gt;      &lt;chr&gt;      &lt;dbl&gt;
+## 1 GO:0000302 GO:0006979 0.663
+## 2 GO:0001101 GO:0009410 0.605
+## 3 GO:0001101 GO:1902074 0.605
+## 4 GO:0001503 GO:0001649 0.564
+## 5 GO:0048771 GO:0001503 0.543
+## 6 GO:0050817 GO:0001503 0.543
+```
+
+---
+
+# Graph data: edge data
+
+
+``` r
+edge_data =
+  sim_matrix %&gt;%
+  # Rename columns to standard network terminology
+  dplyr::rename(from = name1, to = name2) %&gt;%
+  # Keep only strong relationships (similarity &gt; 0.5)
+  dplyr::filter(sim &gt; 0.5)
+
+# Display sample of edge data
+head(edge_data)
+```
+
+```
+## # A tibble: 6 × 3
+##   from       to           sim
+##   &lt;chr&gt;      &lt;chr&gt;      &lt;dbl&gt;
+## 1 GO:0000302 GO:0006979 0.663
+## 2 GO:0001101 GO:0009410 0.605
+## 3 GO:0001101 GO:1902074 0.605
+## 4 GO:0001503 GO:0001649 0.564
+## 5 GO:0048771 GO:0001503 0.543
+## 6 GO:0050817 GO:0001503 0.543
+```
+
+---
+
+# Graph data: node data
+
+
+``` r
+# Create node data from pathway results
+# Nodes represent individual GO terms
+node_data =
+  pathway_result %&gt;%
+  dplyr::select(ID, everything()) %&gt;%
+  dplyr::rename(node = ID)
+
+# Display sample of node data
+head(node_data)
+```
+
+```
+## # A tibble: 6 × 10
+##   node  ONTOLOGY Description GeneRatio BgRatio   pvalue p.adjust   qvalue geneID
+##   &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;       &lt;chr&gt;     &lt;chr&gt;      &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;chr&gt; 
+## 1 GO:0… MF       transmembr… 14/114    86/206… 3.39e-17 7.46e-15 4.57e-15 ENSG0…
+## 2 GO:0… MF       growth fac… 16/114    143/20… 8.29e-17 9.12e-15 5.59e-15 ENSG0…
+## 3 GO:0… MF       transmembr… 12/114    69/206… 2.92e-15 2.14e-13 1.31e-13 ENSG0…
+## 4 GO:0… BP       wound heal… 23/112    495/20… 1.85e-15 4.95e-12 3.27e-12 ENSG0…
+## 5 GO:0… MF       protein ty… 12/114    151/20… 4.27e-11 2.35e- 9 1.44e- 9 ENSG0…
+## 6 GO:0… MF       cytokine b… 11/114    144/20… 4.39e-10 1.93e- 8 1.18e- 8 ENSG0…
+## # ℹ 1 more variable: Count &lt;dbl&gt;
+```
+
+---
+
+# Create a graph data structure
+
+
+``` r
+# Create a graph data structure using tidygraph
+# Combines node and edge information into a single object
+graph_data =
+  tidygraph::tbl_graph(nodes = node_data,
+                       edges = edge_data,
+                       directed = FALSE) %&gt;%
+  # Calculate node degree (number of connections) as a centrality measure
+  dplyr::mutate(degree = tidygraph::centrality_degree())
+graph_data
+```
+
+```
+## # A tbl_graph: 331 nodes and 712 edges
+## #
+## # An undirected simple graph with 66 components
+## #
+## # Node Data: 331 × 11 (active)
+##    node       ONTOLOGY Description  GeneRatio BgRatio   pvalue p.adjust   qvalue
+##    &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt;        &lt;chr&gt;     &lt;chr&gt;      &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
+##  1 GO:0019199 MF       transmembra… 14/114    86/206… 3.39e-17 7.46e-15 4.57e-15
+##  2 GO:0019838 MF       growth fact… 16/114    143/20… 8.29e-17 9.12e-15 5.59e-15
+##  3 GO:0004714 MF       transmembra… 12/114    69/206… 2.92e-15 2.14e-13 1.31e-13
+##  4 GO:0042060 BP       wound heali… 23/112    495/20… 1.85e-15 4.95e-12 3.27e-12
+##  5 GO:0004713 MF       protein tyr… 12/114    151/20… 4.27e-11 2.35e- 9 1.44e- 9
+##  6 GO:0019955 MF       cytokine bi… 11/114    144/20… 4.39e-10 1.93e- 8 1.18e- 8
+##  7 GO:0005125 MF       cytokine ac… 14/114    286/20… 6.13e-10 2.25e- 8 1.38e- 8
+##  8 GO:0050840 MF       extracellul… 8/114     56/206… 7.53e-10 2.37e- 8 1.45e- 8
+##  9 GO:1903034 BP       regulation … 13/112    183/20… 1.99e-11 2.67e- 8 1.76e- 8
+## 10 GO:0008083 MF       growth fact… 11/114    162/20… 1.54e- 9 4.25e- 8 2.60e- 8
+## # ℹ 321 more rows
+## # ℹ 3 more variables: geneID &lt;chr&gt;, Count &lt;dbl&gt;, degree &lt;dbl&gt;
+## #
+## # Edge Data: 712 × 3
+##    from    to   sim
+##   &lt;int&gt; &lt;int&gt; &lt;dbl&gt;
+## 1   187   316 0.663
+## 2   177   240 0.605
+## 3   177   325 0.605
+## # ℹ 709 more rows
+```
+
+---
+
+# Community/module detection
+
+
+``` r
+# Detect subnetworks/communities within the graph
+# Edge betweenness clustering algorithm identifies modular structures
+subnetwork =
+  igraph::cluster_edge_betweenness(graph = graph_data, weights = abs(edge_attr(graph_data, "sim")))
+
+# Create module labels for each detected community
+cluster =
+  paste("GO_Module", as.character(igraph::membership(subnetwork)), sep = "_")
+head(cluster)
+```
+
+```
+## [1] "GO_Module_1" "GO_Module_2" "GO_Module_1" "GO_Module_3" "GO_Module_1"
+## [6] "GO_Module_2"
+```
+
+---
+
+# Add module information to the graph data
+
+
+``` r
+# Add module information to the graph data
+graph_data =
+  graph_data %&gt;%
+  tidygraph::mutate(module = cluster)
+graph_data
+```
+
+```
+## # A tbl_graph: 331 nodes and 712 edges
+## #
+## # An undirected simple graph with 66 components
+## #
+## # Node Data: 331 × 12 (active)
+##    node       ONTOLOGY Description  GeneRatio BgRatio   pvalue p.adjust   qvalue
+##    &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt;        &lt;chr&gt;     &lt;chr&gt;      &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
+##  1 GO:0019199 MF       transmembra… 14/114    86/206… 3.39e-17 7.46e-15 4.57e-15
+##  2 GO:0019838 MF       growth fact… 16/114    143/20… 8.29e-17 9.12e-15 5.59e-15
+##  3 GO:0004714 MF       transmembra… 12/114    69/206… 2.92e-15 2.14e-13 1.31e-13
+##  4 GO:0042060 BP       wound heali… 23/112    495/20… 1.85e-15 4.95e-12 3.27e-12
+##  5 GO:0004713 MF       protein tyr… 12/114    151/20… 4.27e-11 2.35e- 9 1.44e- 9
+##  6 GO:0019955 MF       cytokine bi… 11/114    144/20… 4.39e-10 1.93e- 8 1.18e- 8
+##  7 GO:0005125 MF       cytokine ac… 14/114    286/20… 6.13e-10 2.25e- 8 1.38e- 8
+##  8 GO:0050840 MF       extracellul… 8/114     56/206… 7.53e-10 2.37e- 8 1.45e- 8
+##  9 GO:1903034 BP       regulation … 13/112    183/20… 1.99e-11 2.67e- 8 1.76e- 8
+## 10 GO:0008083 MF       growth fact… 11/114    162/20… 1.54e- 9 4.25e- 8 2.60e- 8
+## # ℹ 321 more rows
+## # ℹ 4 more variables: geneID &lt;chr&gt;, Count &lt;dbl&gt;, degree &lt;dbl&gt;, module &lt;chr&gt;
+## #
+## # Edge Data: 712 × 3
+##    from    to   sim
+##   &lt;int&gt; &lt;int&gt; &lt;dbl&gt;
+## 1   187   316 0.663
+## 2   177   240 0.605
+## 3   177   325 0.605
+## # ℹ 709 more rows
+```
+
+---
+
+# Extract node attributes with module assignments
+
+
+``` r
+result_with_module =
+  igraph::vertex_attr(graph_data) %&gt;%
+  do.call(cbind, .) %&gt;%
+  tibble::as_tibble() %&gt;%
+  # Convert p.adjust to numeric for proper sorting
+  dplyr::mutate(p.adjust = as.numeric(p.adjust)) %&gt;%
+  # Sort by module and significance
+  dplyr::arrange(module, p.adjust)
+
+# Further organize results by ontology type, module, and significance
+result_with_module =
+  result_with_module %&gt;%
+  dplyr::arrange(ONTOLOGY, module, p.adjust)
+```
+
+---
+
+# Extract node attributes with module assignments
+
+
+``` r
+# Calculate the number of GO terms in each module
+module_content_number =
+  result_with_module %&gt;%
+  dplyr::count(module) %&gt;%
+  dplyr::rename(module_content_number = n)
+
+# Add module size information to results
+result_with_module =
+  result_with_module %&gt;%
+  dplyr::left_join(module_content_number, by = "module")
+head(result_with_module)
+```
+
+```
+## # A tibble: 6 × 13
+##   node      ONTOLOGY Description GeneRatio BgRatio pvalue p.adjust qvalue geneID
+##   &lt;chr&gt;     &lt;chr&gt;    &lt;chr&gt;       &lt;chr&gt;     &lt;chr&gt;   &lt;chr&gt;     &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt; 
+## 1 GO:00140… BP       phosphatid… 11/112    164/20… 1.399…  4.68e-7 3.090… ENSG0…
+## 2 GO:00971… BP       extrinsic … 13/112    262/20… 1.701…  5.06e-7 3.339… ENSG0…
+## 3 GO:00480… BP       phosphatid… 11/112    194/20… 8.197…  1.46e-6 9.652… ENSG0…
+## 4 GO:00703… BP       regulation… 14/112    367/20… 1.133…  1.69e-6 1.111… ENSG0…
+## 5 GO:00328… BP       regulation… 11/112    215/20… 2.378…  2.77e-6 1.826… ENSG0…
+## 6 GO:00703… BP       ERK1 and E… 14/112    393/20… 2.675…  2.94e-6 1.938… ENSG0…
+## # ℹ 4 more variables: Count &lt;chr&gt;, degree &lt;chr&gt;, module &lt;chr&gt;,
+## #   module_content_number &lt;int&gt;
+```
+
+---
+
+# Add module size information to graph data
+
+
+``` r
+graph_data =
+  graph_data %&gt;%
+  # Activate nodes for manipulation
+  activate(what = "nodes") %&gt;%
+  dplyr::left_join(module_content_number, by = "module")
+
+# Display the final graph data structure
+graph_data
+```
+
+```
+## # A tbl_graph: 331 nodes and 712 edges
+## #
+## # An undirected simple graph with 66 components
+## #
+## # Node Data: 331 × 13 (active)
+##    node       ONTOLOGY Description  GeneRatio BgRatio   pvalue p.adjust   qvalue
+##    &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt;        &lt;chr&gt;     &lt;chr&gt;      &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
+##  1 GO:0019199 MF       transmembra… 14/114    86/206… 3.39e-17 7.46e-15 4.57e-15
+##  2 GO:0019838 MF       growth fact… 16/114    143/20… 8.29e-17 9.12e-15 5.59e-15
+##  3 GO:0004714 MF       transmembra… 12/114    69/206… 2.92e-15 2.14e-13 1.31e-13
+##  4 GO:0042060 BP       wound heali… 23/112    495/20… 1.85e-15 4.95e-12 3.27e-12
+##  5 GO:0004713 MF       protein tyr… 12/114    151/20… 4.27e-11 2.35e- 9 1.44e- 9
+##  6 GO:0019955 MF       cytokine bi… 11/114    144/20… 4.39e-10 1.93e- 8 1.18e- 8
+##  7 GO:0005125 MF       cytokine ac… 14/114    286/20… 6.13e-10 2.25e- 8 1.38e- 8
+##  8 GO:0050840 MF       extracellul… 8/114     56/206… 7.53e-10 2.37e- 8 1.45e- 8
+##  9 GO:1903034 BP       regulation … 13/112    183/20… 1.99e-11 2.67e- 8 1.76e- 8
+## 10 GO:0008083 MF       growth fact… 11/114    162/20… 1.54e- 9 4.25e- 8 2.60e- 8
+## # ℹ 321 more rows
+## # ℹ 5 more variables: geneID &lt;chr&gt;, Count &lt;dbl&gt;, degree &lt;dbl&gt;, module &lt;chr&gt;,
+## #   module_content_number &lt;int&gt;
+## #
+## # Edge Data: 712 × 3
+##    from    to   sim
+##   &lt;int&gt; &lt;int&gt; &lt;dbl&gt;
+## 1   187   316 0.663
+## 2   177   240 0.605
+## 3   177   325 0.605
+## # ℹ 709 more rows
+```
+
+---
+
+# Select representative labels for each module
+
+
+``` r
+# Choose the most significant GO term with highest count in each module
+cluster_label_module =
+  igraph::as_data_frame(graph_data, what = "vertices") %&gt;%
+  dplyr::group_by(module) %&gt;%
+  dplyr::filter(p.adjust == min(p.adjust) &amp;
+                  Count == max(Count)) %&gt;%
+  dplyr::slice_head(n = 1) %&gt;%
+  pull(Description)
+
+# Get all GO term descriptions for reference
+cluster_label_all =
+  igraph::as_data_frame(graph_data, what = "vertices")$Description
+```
+
+---
+
+# Visualization of GO term clusters
+
+
+``` r
+# Create network visualization
+plot =
+  graph_data %&gt;%
+  ggraph(layout = 'fr', circular = FALSE) +
+  geom_edge_link(
+    aes(width = sim),
+    strength = 1,
+    color = "black",
+    alpha = 1,
+    show.legend = FALSE
+  ) +
+  geom_node_point(
+    aes(fill = module, size = -log(p.adjust, 10)),
+    shape = 21,
+    alpha = 1,
+    show.legend = FALSE
+  ) +
+  coord_fixed()
+```
+
+
+---
+
+# Visualization of GO term clusters
+
+
+``` r
+plot =
+  plot +
+  geom_node_text(aes(
+    x = x,
+    y = y,
+    label = ifelse(Description %in% cluster_label_module, Description, NA)
+  ),
+  size = 3,
+  repel = TRUE)
+```
+
+---
+
+# Visualization of GO term clusters
+
+
+``` r
+plot =
+  plot +
+  guides(fill = guide_legend(ncol = 1)) +
+  scale_edge_width_continuous(range = c(0.1, 2)) +
+  scale_size_continuous(range = c(1, 7))
+```
+
+---
+
+# Visualization of GO term clusters
+
+
+``` r
+plot =
+  plot +
+  ggraph::theme_graph() +
+  theme(
+    plot.background = element_rect(fill = "transparent", color = NA),
+    panel.background = element_rect(fill = "transparent", color = NA),
+    legend.position = "right",
+    legend.background = element_rect(fill = "transparent", color = NA)
+  )
+```
+
+---
+
+# Visualization of GO term clusters
+
+
+``` r
+plot
+```
+
+![](MD7115-Xiaotao_files/figure-html/unnamed-chunk-80-1.png)&lt;!-- --&gt;
+
+---
+
+# Save the plot
+
+
+``` r
+extrafont::loadfonts()
+ggplot2::ggsave(plot,
+                filename = "similarity_network_plot.pdf",
+                width = 9,
+                height = 7)
+```
+
+
+---
+
+---
+
+# Example: GO similarity network
+
+What's the network?
+
+.pull-left[
+**Nodes**:
+
+- Enriched GO terms
+
+**Edges**:
+
+- Similarity
+
+]
+
+.pull-right[
+&lt;div style="display: flex; justify-content: center; align-items: center;"&gt;
+    &lt;img src="images/cell_host_microbe.png" alt="Description of the image" width="100%"&gt;
+&lt;/div&gt;
+]
+
 
 
 ---
