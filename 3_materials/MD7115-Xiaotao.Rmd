@@ -1771,9 +1771,9 @@ ggplot2::ggsave(plot,
 
 What's the tree?
 
-* **Phylogenetic trees (evolutionary relationships)**
-
 * **Taxonomic trees (classification hierarchies)**
+
+* **Phylogenetic trees (evolutionary relationships)**
 
 * Gene trees (gene family evolution)
 
@@ -1786,26 +1786,52 @@ What's the tree?
 
 # Taxonomic trees
 
-* Applications in microbiome research: Visualizing community structure, analyzing diversity, tracking taxonomic abundance
+.pull-left[
+
+**Purpose:**
+
+* Organize and categorize organisms based on shared characteristics
+
+* Represent hierarchical relationships between taxonomic groups
+
+* Visualize abundance and diversity of taxonomic groups
+
+**Structure:**
+
+* Hierarchical: Each level represents a taxonomic rank
+
+* Nested: Lower ranks are contained within higher ranks
+
+* Non-overlapping: An organism belongs to exactly one group at each rank
+
+]
+
+.pull-right[
+
+<div style="display: flex; justify-content: center; align-items: center;">
+    <img src="https://raw.githubusercontent.com/jaspershen-lab/MD7115-NTU/main/3_materials/images/Fig5_primer.png" alt="Description of the image" width="100%">
+]
 
 ---
 
 # Tree terminology
 
+* Root (domain level, such as Bacteria)
 
-* Root (e.g., domain level: Bacteria, Archaea)
+* Internal nodes (phylum, class, order, family, genus)
 
-* Internal nodes (e.g., phylum, class, order, family, genus)
-
-* Leaf nodes (e.g., species or ASVs/OTUs in microbiome data)
+* Leaf nodes (species or ASVs or OTUs in microbiome data)
 
 * Branches connecting taxonomic levels
 
---- 
 
-# Taxonomic Hierarchies in Microbiology
+---
 
-## Standard taxonomic ranks:
+# Taxonomic hierarchies in microbiology
+
+.pull-left[
+
+**Standard taxonomic ranks:**
 
 * Domain (Bacteria, Archaea)
 
@@ -1820,9 +1846,11 @@ What's the tree?
 * Genus
 
 * Species
+]
 
+.pull-right[
 
-## Microbiome-specific concepts:
+**Microbiome-specific concepts:**
 
 * OTUs (Operational Taxonomic Units)
 
@@ -1830,39 +1858,26 @@ What's the tree?
 
 * MAGs (Metagenome-Assembled Genomes)
 
+]
+
+
 ---
 
-# Microbiome Data Structure
+# Microbiome data structure
 
-## 16S rRNA gene sequencing data:
-
-* Taxonomic assignments based on reference databases
-* Abundance counts at each taxonomic level
-* Often incomplete taxonomic resolution at lower levels
-
-
-## Metagenomic data:
-
-* Broader taxonomic coverage
-
-* Potential for higher resolution
-
-* Integration with functional data
-
-
-## Data formats:
+**Data formats:**
 
 * OTU/ASV tables with taxonomic annotations
 
 * Taxonomic abundance tables at different levels
 
-* BIOM format (Biological Observation Matrix)
-
 ---
 
-# Taxonomic Tree Representation
+# Taxonomic tree representation
 
-## Key attributes in microbiome taxonomic trees:
+.pull-left[
+
+**Key attributes in microbiome taxonomic trees:**
 
 * Hierarchical classification
 
@@ -1872,8 +1887,12 @@ What's the tree?
 
 * Sample metadata
 
+]
 
-## Common visualization types:
+
+.pull-right[
+
+**Common visualization types:**
 
 * Traditional hierarchical trees
 
@@ -1884,6 +1903,101 @@ What's the tree?
 * Sunburst plots
 
 * Heat trees
+
+]
+
+
+---
+
+# Create tree data from phyloseq object
+
+.pull-left[
+
+`phyloseq` is a popular package for microbiome data analysis in R.
+
+```{r, echo=TRUE, eval = FALSE}
+library(phyloseq)
+data(GlobalPatterns)
+GP <- prune_taxa(taxa_sums(GlobalPatterns) > 0, GlobalPatterns)
+GP.chl <- subset_taxa(GP, Phylum=="Chlamydiae")
+
+plot_tree(GP.chl, color="SampleType", 
+          shape="Family", 
+          label.tips="Genus", size="Abundance") + 
+  ggtitle("tree annotation using phyloseq")
+```
+]
+
+
+.pull-right[
+
+```{r, echo=FALSE, eval = TRUE}
+library(phyloseq)
+data(GlobalPatterns)
+GP <- prune_taxa(taxa_sums(GlobalPatterns) > 0, GlobalPatterns)
+GP.chl <- subset_taxa(GP, Phylum=="Chlamydiae")
+
+plot_tree(GP.chl, color="SampleType", 
+          shape="Family", 
+          label.tips="Genus", size="Abundance") + 
+  ggtitle("tree annotation using phyloseq")
+```
+]
+
+
+
+---
+
+# Create tree data from phyloseq object
+
+.pull-left[
+```{r, echo=TRUE, eval = FALSE}
+library(scales)
+library(ggtree)
+p <- ggtree(GP.chl, ladderize = FALSE) +
+  geom_text2(aes(subset = !isTip, label = label),
+             hjust = -.2,
+             size = 4) +
+  geom_tiplab(aes(label = Genus), hjust = -.3) +
+  geom_point(aes(
+    x = x + hjust,
+    color = SampleType,
+    shape = Family,
+    size = Abundance
+  ),
+  na.rm = TRUE) +
+  scale_size_continuous(trans = log_trans(5)) +
+  theme(legend.position = "right") +
+  ggtitle("reproduce phyloseq by ggtree")
+print(p)
+```
+]
+
+
+.pull-right[
+```{r, echo=FALSE, eval = TRUE}
+library(scales)
+library(ggtree)
+p <- ggtree(GP.chl, ladderize = FALSE) +
+  geom_text2(aes(subset = !isTip, label = label),
+             hjust = -.2,
+             size = 4) +
+  geom_tiplab(aes(label = Genus), hjust = -.3) +
+  geom_point(aes(
+    x = x + hjust,
+    color = SampleType,
+    shape = Family,
+    size = Abundance
+  ),
+  na.rm = TRUE) +
+  scale_size_continuous(trans = log_trans(5)) +
+  theme(legend.position = "right") +
+  ggtitle("reproduce phyloseq by ggtree")
+print(p)
+```
+]
+
+
 
 ---
 
