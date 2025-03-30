@@ -76,3 +76,8 @@ if(!require("ggtreeExtra", quietly = TRUE)){
 if (!require(r4projects)) {
   remotes::install_github("jaspershen/r4projects")
 }
+
+if (!require(simplifyEnrichment)) {
+  BiocManager::install("simplifyEnrichment")
+}
+

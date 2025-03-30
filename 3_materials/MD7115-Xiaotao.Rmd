@@ -98,6 +98,17 @@ In this course, we will learn how to use R to analyze and visualize data in the 
 
 ---
 
+# RStudio project: download from GitHub
+
+![](https://raw.githubusercontent.com/jaspershen-lab/MD7115-NTU/main/3_materials/images/github.png)
+
+Link: https://github.com/jaspershen-lab/MD7115-NTU
+
+
+
+
+---
+
 # Preparation: general packages 1
 
 We need to install some general R packages before the class.
