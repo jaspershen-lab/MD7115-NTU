@@ -9,6 +9,7 @@ output:
     css: [xaringan-themer.css, my-theme.css]
     # includes:
     #   after_body: insert-logo.html
+    self_contained: true
     nature:
       ratio: '16:9'
       countdown: false
@@ -171,7 +172,7 @@ A small undirected graph with numbered nodes.
 
 
 .pull-right[
-<img src="images/graph.png" alt="a graph" width="70%">
+<img src="https://raw.githubusercontent.com/jaspershen-lab/MD7115-NTU/main/3_materials/images/graph.png" alt="a graph" width="70%">
 ]
 
 ---
@@ -210,7 +211,7 @@ Protein-protein interaction networks (PPIN) are mathematical representations of 
 
 .pull-right[
 <div style="display: flex; justify-content: center; align-items: center;">
-    <img src="images/ppi_network.png" alt="Description of the image" width="100%">
+    <img src="https://raw.githubusercontent.com/jaspershen-lab/MD7115-NTU/main/3_materials/images/ppi_network.png" alt="Description of the image" width="100%">
 </div>
 
 > Jeong et al. Nature 2001
@@ -235,7 +236,7 @@ A metabolic network is the complete set of metabolic and physical processes that
 
 .pull-right[
 <div style="display: flex; justify-content: center; align-items: center;">
-    <img src="images/metabolic_network.png" alt="Description of the image" width="100%">
+    <img src="https://raw.githubusercontent.com/jaspershen-lab/MD7115-NTU/main/3_materials/images/metabolic_network.png" alt="Description of the image" width="100%">
 </div>
 
 > https://en.wikipedia.org/wiki/Metabolic_network
@@ -262,7 +263,7 @@ Gene Co-expression Networks
 
 .pull-right[
 <div style="display: flex; justify-content: center; align-items: center;">
-    <img src="images/correlation_network.png" alt="Description of the image" width="100%">
+    <img src="https://raw.githubusercontent.com/jaspershen-lab/MD7115-NTU/main/3_materials/images/correlation_network.png" alt="Description of the image" width="100%">
 </div>
 
 > Zhou et al. Cell Host & Microbe 2024
@@ -308,7 +309,7 @@ In this network, node 3's degree is 3. node 1's degree is 1.
 
 
 .pull-right[
-<img src="images/graph.png" alt="a graph" width="70%">
+<img src="https://raw.githubusercontent.com/jaspershen-lab/MD7115-NTU/main/3_materials/images/graph.png" alt="a graph" width="70%">
 ]
 
 ---
@@ -330,7 +331,7 @@ These hubs are often important for the overall structure and function of the net
 
 
 .pull-right[
-<img src="images/scale_free_network.png" alt="a graph" width="70%">
+<img src="https://raw.githubusercontent.com/jaspershen-lab/MD7115-NTU/main/3_materials/images/scale_free_network.png" alt="a graph" width="70%">
 
 > https://link.springer.com/article/10.1007/s10142-022-00907-y
 
@@ -599,7 +600,7 @@ ggraph(graph2, layout = 'linear', circular = TRUE) +
 # Example 1: Correlation network
 
 <div style="display: flex; justify-content: center; align-items: center;">
-    <img src="images/ED_FIG7.jpg" alt="Description of the image" width="55%">
+    <img src="https://raw.githubusercontent.com/jaspershen-lab/MD7115-NTU/main/3_materials/images/ED_FIG7.jpg" alt="Description of the image" width="55%">
 </div>
 
 > [Shen, et al. Nature Biomedical Engineering, 2024](https://www.shen-lab.org/publication/Multi-omics%20microsampling%20for%20the%20profiling%20of%20lifestyle-associated%20changes%20in%20health.pdf)
@@ -628,7 +629,7 @@ What's the network?
 
 .pull-right[
 <div style="display: flex; justify-content: center; align-items: center;">
-    <img src="images/ED_FIG7.jpg" alt="Description of the image" width="100%">
+    <img src="https://raw.githubusercontent.com/jaspershen-lab/MD7115-NTU/main/3_materials/images/ED_FIG7.jpg" alt="Description of the image" width="100%">
 </div>
 ]
 
@@ -831,7 +832,8 @@ ggraph(graph_data, layout = 'kk') +
     shape = 21,
     alpha = 0.5,
     show.legend = TRUE
-  )
+  ) +
+  coord_fixed()
 plot
 ```
 ]
@@ -843,15 +845,9 @@ plot
 
 .pull-left[
 ```{r, echo=TRUE, eval = FALSE}
-plot =
-  plot +
-  shadowtext::geom_shadowtext(
-    aes(
-      x = x,
-      y = y,
-      label = ifelse(class2 == "wearable", mol_name, NA),
-      color = class
-    ),
+plot = plot +
+  shadowtext::geom_shadowtext(aes(x = x, y = y,
+      label = ifelse(class2 == "wearable", mol_name, NA), color = class),
     bg.color = "white",
     size = 5,
     show.legend = FALSE
@@ -863,15 +859,9 @@ plot
 .pull-right[
 ```{r, echo=FALSE, eval = TRUE}
 options(warn = -1)
-plot =
-  plot +
-  shadowtext::geom_shadowtext(
-    aes(
-      x = x,
-      y = y,
-      label = ifelse(class2 == "wearable", mol_name, NA),
-      color = class
-    ),
+plot = plot +
+  shadowtext::geom_shadowtext(aes(x = x, y = y,
+      label = ifelse(class2 == "wearable", mol_name, NA), color = class),
     bg.color = "white",
     size = 5,
     show.legend = FALSE
@@ -1064,39 +1054,37 @@ plot
 # Visualize the circle layout
 
 .pull-left[
-```{r, echo=TRUE, eval = TRUE}
-plot =
-  plot +
+```{r, echo=TRUE, eval = FALSE}
+plot = plot +
   shadowtext::geom_shadowtext(
-    aes(
-      x = x,
-      y = y,
-      label = ifelse(class2 == "wearable", mol_name, NA),
-      color = class
-    ),
-    bg.color = "white",
-    size = 5,
-    show.legend = FALSE
-  ) +
+    aes(x, y, label = ifelse(class2 == "wearable", mol_name, NA),
+      color = class),
+    bg.color = "white", size = 5, show.legend = FALSE) +
   shadowtext::geom_shadowtext(
-    aes(
-      x = x,
-      y = y,
+    aes(x, y,
       label = ifelse(class2 == "wearable", NA, mol_name),
       color = class,
       nudge_y = ifelse(class2 == "wearable", "inward", 'outward'),
-      angle = -((-node_angle(x, y) + 90) %% 180) + 90
-    ),
-    bg.color = "white",
-    size = 2,
-    show.legend = FALSE,
-    check_overlap = TRUE
-  )
+      angle = -((-node_angle(x, y) + 90) %% 180) + 90),
+    bg.color = "white", size = 2, show.legend = FALSE, check_overlap = TRUE)
+plot
 ```
 ]
 
 .pull-right[
-```{r, echo=TRUE, eval = TRUE}
+```{r, echo=FALSE, eval=TRUE}
+plot = plot +
+  shadowtext::geom_shadowtext(
+    aes(x, y, label = ifelse(class2 == "wearable", mol_name, NA),
+      color = class),
+    bg.color = "white", size = 5, show.legend = FALSE) +
+  shadowtext::geom_shadowtext(
+    aes(x, y,
+      label = ifelse(class2 == "wearable", NA, mol_name),
+      color = class,
+      nudge_y = ifelse(class2 == "wearable", "inward", 'outward'),
+      angle = -((-node_angle(x, y) + 90) %% 180) + 90),
+    bg.color = "white", size = 2, show.legend = FALSE, check_overlap = TRUE)
 plot
 ```
 ]
@@ -1174,7 +1162,7 @@ What's the network?
 
 .pull-right[
 <div style="display: flex; justify-content: center; align-items: center;">
-    <img src="images/similarity_network_plot.jpg" alt="Description of the image" width="100%">
+    <img src="https://raw.githubusercontent.com/jaspershen-lab/MD7115-NTU/main/3_materials/images/similarity_network_plot.jpg" alt="Description of the image" width="100%">
 </div>
 ]
 
@@ -1492,7 +1480,8 @@ cluster_label_all =
 
 # Visualization of GO term clusters
 
-```{r, echo=TRUE, eval = TRUE}
+.pull-left[
+```{r, echo=TRUE, eval = FALSE}
 # Create network visualization
 plot =
   graph_data %>%
@@ -1511,14 +1500,43 @@ plot =
     show.legend = FALSE
   ) +
   coord_fixed()
+plot
 ```
+]
+
+.pull-right[
+```{r, echo=FALSE, eval = TRUE}
+# Create network visualization
+plot =
+  graph_data %>%
+  ggraph(layout = 'fr', circular = FALSE) +
+  geom_edge_link(
+    aes(width = sim),
+    strength = 1,
+    color = "black",
+    alpha = 1,
+    show.legend = FALSE
+  ) +
+  geom_node_point(
+    aes(fill = module, size = -log(p.adjust, 10)),
+    shape = 21,
+    alpha = 1,
+    show.legend = FALSE
+  ) +
+  coord_fixed()
+plot
+```
+]
+
+
 
 
 ---
 
 # Visualization of GO term clusters
 
-```{r, echo=TRUE, eval = TRUE}
+.pull-left[
+```{r, echo=TRUE, eval = FALSE}
 plot =
   plot +
   geom_node_text(aes(
@@ -1528,25 +1546,59 @@ plot =
   ),
   size = 3,
   repel = TRUE)
+plot
 ```
+]
+
+.pull-right[
+```{r, echo=FALSE, eval=TRUE}
+plot =
+  plot +
+  geom_node_text(aes(
+    x = x,
+    y = y,
+    label = ifelse(Description %in% cluster_label_module, Description, NA)
+  ),
+  size = 3,
+  repel = TRUE)
+plot
+```
+]
 
 ---
 
 # Visualization of GO term clusters
 
-```{r, echo=TRUE, eval = TRUE}
+.pull-left[
+```{r, echo=TRUE, eval = FALSE}
 plot =
   plot +
   guides(fill = guide_legend(ncol = 1)) +
   scale_edge_width_continuous(range = c(0.1, 2)) +
   scale_size_continuous(range = c(1, 7))
+plot
 ```
+]
+
+.pull-right[
+```{r, echo=FALSE, eval=TRUE}
+plot =
+  plot +
+  guides(fill = guide_legend(ncol = 1)) +
+  scale_edge_width_continuous(range = c(0.1, 2)) +
+  scale_size_continuous(range = c(1, 7))
+plot
+```
+]
+
+
 
 ---
 
 # Visualization of GO term clusters
 
-```{r, echo=TRUE, eval = TRUE}
+.pull-left[
+```{r, echo=TRUE, eval = FALSE}
 plot =
   plot +
   ggraph::theme_graph() +
@@ -1556,15 +1608,24 @@ plot =
     legend.position = "right",
     legend.background = element_rect(fill = "transparent", color = NA)
   )
-```
-
----
-
-# Visualization of GO term clusters
-
-```{r, echo=TRUE, eval = TRUE}
 plot
 ```
+]
+
+.pull-right[
+```{r, echo=FALSE, eval=TRUE}
+plot =
+  plot +
+  ggraph::theme_graph() +
+  theme(
+    plot.background = element_rect(fill = "transparent", color = NA),
+    panel.background = element_rect(fill = "transparent", color = NA),
+    legend.position = "right",
+    legend.background = element_rect(fill = "transparent", color = NA)
+  )
+plot
+```
+]
 
 ---
 
@@ -1581,9 +1642,7 @@ ggplot2::ggsave(plot,
 
 ---
 
----
-
-# Example: GO similarity network
+# Example: Microbiome data
 
 What's the tree?
 
@@ -1595,10 +1654,598 @@ The phylogenetics tree of microbiome data.
 
 .pull-right[
 <div style="display: flex; justify-content: center; align-items: center;">
-    <img src="images/cell_host_microbe.png" alt="Description of the image" width="100%">
+    <img src="https://raw.githubusercontent.com/jaspershen-lab/MD7115-NTU/main/3_materials/images/cell_host_microbe.png" alt="Description of the image" width="80%">
 </div>
+
+> Zhou et al. Cell Host & Microbe 2024
+
 ]
 
+
+---
+
+# Load libraries
+
+```{r, echo=TRUE, eval = TRUE}
+if (!requireNamespace("microbiomeViz", quietly = TRUE)) {
+  remotes::install_github("lch14forever/microbiomeViz")
+}
+if (!requireNamespace("phyloseq", quietly = TRUE)) {
+  BiocManager::install("phyloseq")
+}
+library(phyloseq)
+library(microbiomeViz)
+library(tidyverse)
+library(ggtreeExtra)
+library(ggtree)
+```
+
+---
+
+# Read the data
+
+```{r, echo=TRUE, eval = TRUE}
+personalized_score = 
+  readr::read_csv("https://raw.githubusercontent.com/jaspershen-lab/MD7115-NTU/refs/heads/main/2_demo_data/personalized_score.csv")
+
+head(personalized_score)
+```
+
+---
+
+# Read the data
+
+```{r, echo=TRUE, eval = TRUE}
+load(url("https://github.com/jaspershen-lab/MD7115-NTU/raw/main/2_demo_data/microbiome_data.RData"))
+
+microbiome_data
+```
+
+
+---
+
+# Create a phylogenetic tree
+
+```{r, echo=TRUE, eval = TRUE}
+tree =
+  microbiomeViz::parsePhyloseq(
+    physeq = microbiome_data,
+    use_abundance = FALSE,
+    node.size.scale = 0,
+    node.size.offset = 0
+  )
+tree
+```
+
+---
+
+# Visualize the tree
+
+.pull-left[
+```{r, echo=TRUE, eval = FALSE}
+raw_plot =
+  tree.backbone(
+    tree = tree,
+    size = 0.3,
+    shape = 16,
+    layout = "circular",
+    fill = "black",
+    color = "black"
+  )
+raw_plot
+```
+]
+
+.pull-right[
+```{r, echo=FALSE, eval = TRUE}
+raw_plot =
+  tree.backbone(
+    tree = tree,
+    size = 0.3,
+    shape = 16,
+    layout = "circular",
+    fill = "black",
+    color = "black"
+  )
+raw_plot
+```
+]
+
+
+---
+
+# Add nodes
+
+```{r, echo=TRUE, eval = TRUE}
+raw_plot$data$nodeClass2 =
+  as.character(raw_plot$data$nodeClass)
+
+raw_plot$data$nodeClass2[is.na(raw_plot$data$nodeClass2)] = "Root"
+raw_plot$data$nodeClass2[raw_plot$data$nodeClass2 == "f"] = "Family"
+raw_plot$data$nodeClass2[raw_plot$data$nodeClass2 == "c"] = "Class"
+raw_plot$data$nodeClass2[raw_plot$data$nodeClass2 == "o"] = "Order"
+raw_plot$data$nodeClass2[raw_plot$data$nodeClass2 == "p"] = "Phylum"
+raw_plot$data$nodeClass2[raw_plot$data$nodeClass2 == "g"] = "Genus"
+raw_plot$data$nodeClass2[raw_plot$data$nodeClass2 == "k"] = "Kingdom"
+
+raw_plot$data$nodeSize2 = raw_plot$data$nodeSize
+raw_plot$data$nodeSize2[raw_plot$data$nodeClass2 == "Root"] = 3.5
+raw_plot$data$nodeSize2[raw_plot$data$nodeClass2 == "Kingdom"] = 3
+raw_plot$data$nodeSize2[raw_plot$data$nodeClass2 == "Phylum"] = 2.5
+raw_plot$data$nodeSize2[raw_plot$data$nodeClass2 == "Class"] = 2
+raw_plot$data$nodeSize2[raw_plot$data$nodeClass2 == "Order"] = 1.5
+raw_plot$data$nodeSize2[raw_plot$data$nodeClass2 == "Family"] = 1
+raw_plot$data$nodeSize2[raw_plot$data$nodeClass2 == "Genus"] = 0.5
+```
+
+
+---
+
+# Add nodes
+
+.pull-left[
+```{r, echo=TRUE, eval = FALSE}
+# #####add node point
+raw_plot =
+  raw_plot +
+  ggtree::geom_point2(aes(color = nodeClass2, size = nodeSize2), show.legend = FALSE) +
+  ggnewscale::new_scale(new_aes = "fill")
+
+raw_plot
+```
+]
+
+
+.pull-right[
+```{r, echo=FALSE, eval = TRUE}
+# #####add node point
+raw_plot =
+  raw_plot +
+  ggtree::geom_point2(aes(color = nodeClass2, size = nodeSize2), show.legend = FALSE) +
+  ggnewscale::new_scale(new_aes = "fill")
+
+raw_plot
+```
+]
+
+
+---
+
+# Prepare information for heatmap
+
+```{r, echo=TRUE, eval = TRUE}
+###label 2 is the name of taxa
+raw_plot$data$label2 =
+  raw_plot$data$label %>%
+  stringr::str_split("__") %>%
+  purrr::map(function(x) {
+    x[2]
+  }) %>%
+  unlist()
+
+raw_plot$data$label2[as.character(raw_plot$data$nodeClass) != "g"] = NA
+```
+
+---
+
+# Prepare information for heatmap
+
+```{r, echo=TRUE, eval = TRUE}
+#####add new information
+personalized_score_fc1 =
+  personalized_score %>%
+  dplyr::select(genus, class, fc1) %>%
+  tidyr::pivot_wider(names_from = class, values_from = "fc1")
+colnames(personalized_score_fc1)[-1] = paste(colnames(personalized_score_fc1)[-1], "fc1", sep = "_")
+personalized_score_fc2 =
+  personalized_score %>%
+  dplyr::select(genus, class, fc2) %>%
+  tidyr::pivot_wider(names_from = class, values_from = "fc2")
+colnames(personalized_score_fc2)[-1] = paste(colnames(personalized_score_fc2)[-1], "fc2", sep = "_")
+personalized_score_fc1_p_adjust =
+  personalized_score %>%
+  dplyr::select(genus, class, fc1_p_adjust) %>%
+  tidyr::pivot_wider(names_from = class, values_from = "fc1_p_adjust")
+colnames(personalized_score_fc1_p_adjust)[-1] =
+  paste(colnames(personalized_score_fc1_p_adjust)[-1], "fc1_p_adjust", sep = "_")
+variable_info = tax_table(microbiome_data)
+```
+
+
+---
+
+# Prepare information for heatmap
+
+```{r, echo=TRUE, eval = TRUE}
+new_info =
+  data.frame(Genus = raw_plot$data$label2) %>%
+  dplyr::left_join(as.data.frame(variable_info)[, c("Genus", "Kingdom", "Phylum", "Class", "Order", "Family")], by = "Genus") %>%
+  dplyr::left_join(personalized_score_fc1, by = c("Genus" = "genus")) %>%
+  dplyr::left_join(personalized_score_fc1_p_adjust, by = c("Genus" = "genus")) %>%
+  dplyr::left_join(personalized_score_fc2, by = c("Genus" = "genus")) %>%
+  dplyr::mutate(Stool = case_when(!is.na(Stool_fc1) ~ "Stool", TRUE ~ "no")) %>%
+  dplyr::mutate(Skin = case_when(!is.na(Skin_fc1) ~ "Skin", TRUE ~ "no")) %>%
+  dplyr::mutate(Oral = case_when(!is.na(Oral_fc1) ~ "Oral", TRUE ~ "no")) %>%
+  dplyr::mutate(Nasal = case_when(!is.na(Nasal_fc1) ~ "Nasal", TRUE ~ "no"))
+```
+
+
+---
+
+# Prepare information for heatmap
+
+```{r, echo=TRUE, eval = TRUE}
+new_info =
+  new_info %>%
+  dplyr::mutate(Stool_fc1_star = case_when(
+    !is.na(Stool_fc1_p_adjust) & Stool_fc1_p_adjust < 0.05 ~ "*",
+    TRUE ~ ""
+  )) %>%
+  dplyr::mutate(Skin_fc1_star = case_when(
+    !is.na(Skin_fc1_p_adjust) & Skin_fc1_p_adjust < 0.05 ~ "*",
+    TRUE ~ ""
+  )) %>%
+  dplyr::mutate(Oral_fc1_star = case_when(
+    !is.na(Oral_fc1_p_adjust) & Oral_fc1_p_adjust < 0.05 ~ "*",
+    TRUE ~ ""
+  )) %>%
+  dplyr::mutate(Nasal_fc1_star = case_when(
+    !is.na(Nasal_fc1_p_adjust) & Nasal_fc1_p_adjust < 0.05 ~ "*",
+    TRUE ~ ""
+  ))
+
+raw_plot$data =
+  cbind(raw_plot$data, new_info)
+```
+
+
+---
+
+# Prepare information for heatmap
+
+```{r, echo=TRUE, eval = TRUE}
+head(raw_plot$data )
+```
+
+
+---
+
+# Highlight
+
+.pull-left[
+```{r, echo=TRUE, eval = FALSE}
+######add highlight
+hight_data =
+  raw_plot$data %>%
+  dplyr::filter(stringr::str_detect(label, "p__")) %>%
+  dplyr::select(node, label) %>%
+  dplyr::mutate(label = stringr::str_replace_all(label, "p__", "")) %>%
+  dplyr::rename(id = node, type = label)
+
+plot1 =
+  raw_plot +
+  ggtree::geom_hilight(
+    data = hight_data,
+    mapping = aes(node = id, fill = type),
+    alpha = .4
+  )
+
+plot1
+```
+]
+
+
+.pull-right[
+```{r, echo=FALSE, eval = TRUE}
+######add highlight
+hight_data =
+  raw_plot$data %>%
+  dplyr::filter(stringr::str_detect(label, "p__")) %>%
+  dplyr::select(node, label) %>%
+  dplyr::mutate(label = stringr::str_replace_all(label, "p__", "")) %>%
+  dplyr::rename(id = node, type = label)
+
+plot1 =
+  raw_plot +
+  ggtree::geom_hilight(
+    data = hight_data,
+    mapping = aes(node = id, fill = type),
+    alpha = .4
+  )
+
+plot1
+```
+]
+
+
+---
+
+# Add heatmap: data preparation
+
+```{r, echo=TRUE, eval = TRUE}
+##add fc1 information
+plot1$data$Stool_fc1[which(plot1$data$Stool_fc1 < 0)] = 0
+plot1$data$Skin_fc1[which(plot1$data$Skin_fc1 < 0)] = 0
+plot1$data$Oral_fc1[which(plot1$data$Oral_fc1 < 0)] = 0
+plot1$data$Nasal_fc1[which(plot1$data$Nasal_fc1 < 0)] = 0
+```
+
+---
+
+# Add heatmap: data preparation
+
+```{r, echo=TRUE, eval = TRUE}
+##add multiple tip information
+stool_fc1_info = plot1$data[, c("Stool_fc1", "isTip")]
+rownames(stool_fc1_info) = plot1$data$label
+stool_fc1_info = stool_fc1_info %>% dplyr::filter(isTip) %>% dplyr::select(-isTip)
+skin_fc1_info = plot1$data[, c("Skin_fc1", "isTip")]
+rownames(skin_fc1_info) = plot1$data$label
+skin_fc1_info = skin_fc1_info %>% dplyr::filter(isTip) %>% dplyr::select(-isTip)
+oral_fc1_info = plot1$data[, c("Oral_fc1", "isTip")]
+rownames(oral_fc1_info) = plot1$data$label
+oral_fc1_info = oral_fc1_info %>% dplyr::filter(isTip) %>% dplyr::select(-isTip)
+nasal_fc1_info = plot1$data[, c("Nasal_fc1", "isTip")]
+rownames(nasal_fc1_info) = plot1$data$label
+nasal_fc1_info = nasal_fc1_info %>% dplyr::filter(isTip) %>% dplyr::select(-isTip)
+```
+
+
+---
+
+# Add heatmap
+
+```{r, echo=TRUE, eval = TRUE}
+plot1 = plot1 +
+  ggnewscale::new_scale_fill()
+
+body_site_color = c(
+  "Stool" = ggsci::pal_jama()(n = 7)[2],
+  "Skin" = ggsci::pal_jama()(n = 7)[3],
+  "Oral" = ggsci::pal_jama()(n = 7)[4],
+  "Nasal" = ggsci::pal_jama()(n = 7)[5]
+)
+```
+
+
+
+---
+
+# Add heatmap
+
+.pull-left[
+```{r, echo=TRUE, eval = FALSE}
+plot1 = plot1 + ggnewscale::new_scale_fill()
+plot2 =
+  gheatmap(p = plot1,
+    data = stool_fc1_info,
+    offset = -0.1, width = .08, colnames_angle = 95, colnames_offset_y = .25,
+    colnames = FALSE, color = alpha(body_site_color["Stool"], 1),
+    legend_title = "Index1") +
+  scale_fill_gradientn(
+    colours = c(RColorBrewer::brewer.pal(n = 11, name = "BrBG"))[-c(5:7)],
+    na.value = "white", limits = c(0, 0.8)
+  ) +
+  ggnewscale::new_scale(new_aes = "fill") +
+  geom_tippoint(
+    mapping = aes(shape = Stool_fc1_star), x = 6.35, size = 2, show.legend = FALSE) +
+  scale_shape_manual(values = c("*" = "*")) +
+  ggnewscale::new_scale(new_aes = "shape")
+
+plot2
+```
+]
+
+
+.pull-right[
+```{r, echo=FALSE, eval = TRUE}
+plot1 = plot1 + ggnewscale::new_scale_fill()
+plot2 =
+  gheatmap(p = plot1,
+    data = stool_fc1_info,
+    offset = -0.1, width = .08, colnames_angle = 95, colnames_offset_y = .25,
+    colnames = FALSE, color = alpha(body_site_color["Stool"], 1),
+    legend_title = "Index1") +
+  scale_fill_gradientn(
+    colours = c(RColorBrewer::brewer.pal(n = 11, name = "BrBG"))[-c(5:7)],
+    na.value = "white", limits = c(0, 0.8)
+  ) +
+  ggnewscale::new_scale(new_aes = "fill") +
+  geom_tippoint(
+    mapping = aes(shape = Stool_fc1_star), x = 6.35, size = 2, show.legend = FALSE) +
+  scale_shape_manual(values = c("*" = "*")) +
+  ggnewscale::new_scale(new_aes = "shape")
+
+plot2
+```
+]
+
+---
+
+# Add heatmap
+
+.pull-left[
+```{r, echo=TRUE, eval = FALSE}
+plot3 =
+  gheatmap(p = plot2,
+    data = skin_fc1_info,
+    offset = 0.5, width = .08, colnames_angle = 95, colnames_offset_y = .25,
+    colnames = FALSE, color = alpha(body_site_color["Skin"], 1),
+    legend_title = "Index1") +
+  scale_fill_gradientn(
+    colours = c(RColorBrewer::brewer.pal(n = 11, name = "BrBG"))[-c(5:7)],
+    na.value = "white", limits = c(0, 0.8)) +
+  ggnewscale::new_scale(new_aes = "fill") +
+  geom_tippoint(
+    mapping = aes(shape = Skin_fc1_star), size = 2, show.legend = FALSE) +
+  scale_shape_manual(values = c("*" = "*")) +
+  ggnewscale::new_scale(new_aes = "shape")
+plot3
+```
+]
+
+
+.pull-right[
+```{r, echo=FALSE, eval = TRUE}
+plot3 =
+  gheatmap(p = plot2,
+    data = skin_fc1_info,
+    offset = 0.5, width = .08, colnames_angle = 95, colnames_offset_y = .25,
+    colnames = FALSE, color = alpha(body_site_color["Skin"], 1),
+    legend_title = "Index1") +
+  scale_fill_gradientn(
+    colours = c(RColorBrewer::brewer.pal(n = 11, name = "BrBG"))[-c(5:7)],
+    na.value = "white", limits = c(0, 0.8)) +
+  ggnewscale::new_scale(new_aes = "fill") +
+  geom_tippoint(
+    mapping = aes(shape = Skin_fc1_star), size = 2, show.legend = FALSE) +
+  scale_shape_manual(values = c("*" = "*")) +
+  ggnewscale::new_scale(new_aes = "shape")
+plot3
+```
+]
+
+
+---
+
+# Add heatmap
+
+.pull-left[
+```{r, echo=TRUE, eval = FALSE}
+plot4 =
+  gheatmap(
+    p = plot3,
+    data = oral_fc1_info,
+    offset = 1.1,width = .08,colnames_angle = 95,colnames_offset_y = .25,
+    colnames = FALSE,color = alpha(body_site_color["Oral"], 1),
+    legend_title = "Index1") +
+  scale_fill_gradientn(
+    colours = c(RColorBrewer::brewer.pal(n = 11, name = "BrBG"))[-c(5:7)],
+    na.value = "white",limits = c(0, 0.8)) +
+  ggnewscale::new_scale(new_aes = "fill") +
+  geom_tippoint(
+    mapping = aes(shape = Oral_fc1_star),x = 7.55,size = 2,show.legend = FALSE) +
+  scale_shape_manual(values = c("*" = "*")) +
+  ggnewscale::new_scale(new_aes = "shape")
+plot4
+```
+]
+
+
+.pull-right[
+```{r, echo=FALSE, eval = TRUE}
+plot4 =
+  gheatmap(
+    p = plot3,
+    data = oral_fc1_info,
+    offset = 1.1,width = .08,colnames_angle = 95,colnames_offset_y = .25,
+    colnames = FALSE,color = alpha(body_site_color["Oral"], 1),
+    legend_title = "Index1") +
+  scale_fill_gradientn(
+    colours = c(RColorBrewer::brewer.pal(n = 11, name = "BrBG"))[-c(5:7)],
+    na.value = "white",limits = c(0, 0.8)) +
+  ggnewscale::new_scale(new_aes = "fill") +
+  geom_tippoint(
+    mapping = aes(shape = Oral_fc1_star),x = 7.55,size = 2,show.legend = FALSE) +
+  scale_shape_manual(values = c("*" = "*")) +
+  ggnewscale::new_scale(new_aes = "shape")
+plot4
+```
+]
+
+
+---
+
+# Add heatmap
+
+.pull-left[
+```{r, echo=TRUE, eval = FALSE}
+plot5 =
+  gheatmap(p = plot4,
+    data = nasal_fc1_info,offset = 1.7,width = .08,
+    colnames_angle = 95,colnames_offset_y = .25,colnames = FALSE,
+    color = alpha(body_site_color["Nasal"], 1),legend_title = "Index1") +
+  scale_fill_gradientn(
+    colours = c(RColorBrewer::brewer.pal(n = 11, name = "BrBG"))[-c(5:7)],
+    na.value = "white",limits = c(0, 0.8)) +
+  ggnewscale::new_scale(new_aes = "fill") +
+  geom_tippoint(
+    mapping = aes(shape = Nasal_fc1_star),x = 8.15,size = 2,show.legend = FALSE) +
+  scale_shape_manual(values = c("*" = "*")) +
+  ggnewscale::new_scale(new_aes = "shape")
+plot5
+```
+]
+
+
+.pull-right[
+```{r, echo=FALSE, eval = TRUE}
+plot5 =
+  gheatmap(p = plot4,
+    data = nasal_fc1_info,offset = 1.7,width = .08,
+    colnames_angle = 95,colnames_offset_y = .25,colnames = FALSE,
+    color = alpha(body_site_color["Nasal"], 1),legend_title = "Index1") +
+  scale_fill_gradientn(
+    colours = c(RColorBrewer::brewer.pal(n = 11, name = "BrBG"))[-c(5:7)],
+    na.value = "white",limits = c(0, 0.8)) +
+  ggnewscale::new_scale(new_aes = "fill") +
+  geom_tippoint(
+    mapping = aes(shape = Nasal_fc1_star),x = 8.15,size = 2,show.legend = FALSE) +
+  scale_shape_manual(values = c("*" = "*")) +
+  ggnewscale::new_scale(new_aes = "shape")
+plot5
+```
+]
+
+
+---
+
+# Add node labels
+
+.pull-left[
+```{r, echo=TRUE, eval = FALSE}
+plot6 =
+  plot5 +
+  ggnewscale::new_scale(new_aes = "color") +
+  geom_tiplab(
+    aes(label = label2, color = Phylum),
+    offset = 2.5,
+    size = 2,
+    show.legend = FALSE
+  )
+
+plot6
+```
+]
+
+
+.pull-right[
+```{r, echo=FALSE, eval = TRUE}
+plot6 =
+  plot5 +
+  ggnewscale::new_scale(new_aes = "color") +
+  geom_tiplab(
+    aes(label = label2, color = Phylum),
+    offset = 2.5,
+    size = 2,
+    show.legend = FALSE
+  )
+plot6
+```
+]
+
+
+---
+
+# Save the plot
+
+
+```{r, echo=TRUE, eval = TRUE}
+ggplot2::ggsave(plot6,
+                filename = "microbiome_tree_heatmap.pdf",
+                width = 9,
+                height = 7)
+```
 
 
 ---

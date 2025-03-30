@@ -1,28 +1,26 @@
+if (!requireNamespace("microbiomeViz", quietly = TRUE)) {
+  remotes::install_github("lch14forever/microbiomeViz")
+}
+if (!requireNamespace("phyloseq", quietly = TRUE)) {
+  BiocManager::install("phyloseq")
+}
 library(tidyverse)
-library(phyloseq)
+library(ggtreeExtra)
+library(ggtree)
 
 setwd(r4projects::get_project_wd())
 rm(list = ls())
 
-personalized_score = readr::read_csv("2_demo_data/personalized_score.csv")
+personalized_score = 
+  readr::read_csv("https://raw.githubusercontent.com/jaspershen-lab/MD7115-NTU/refs/heads/main/2_demo_data/personalized_score.csv")
 
 head(personalized_score)
 
-load("2_demo_data/microbiome_data.RData")
+load(url("https://github.com/jaspershen-lab/MD7115-NTU/raw/main/2_demo_data/microbiome_data.RData"))
 
 microbiome_data
 
 ####HMP
-if (!requireNamespace("microbiomeViz", quietly = TRUE)) {
-  remotes::install_github("lch14forever/microbiomeViz")
-}
-library(ggtreeExtra)
-library(ggtree)
-if (!requireNamespace("phyloseq", quietly = TRUE)) {
-  BiocManager::install("phyloseq")
-}
-library(phyloseq)
-library(tidyverse)
 
 ###create tree
 tree =
