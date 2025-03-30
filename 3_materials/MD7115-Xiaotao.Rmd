@@ -1,7 +1,7 @@
 ---
 title: "MD7115: R for Graph, Network and Trees"
 subtitle: "Applications in Biomedical Research"
-author: '<br><br>Xiaotao Shen <br> Assistant Professor / <a href="http://shen-lab.org/">Shen lab</a> <br> <a href="http://shen-lab.org"> <i class="fa fa-home fa-fw"></i>&nbsp; shen-lab.org</a><br> <a href="mailto:xiaotao.shen@ntu.edu.sg"><i class="fa fa-paper-plane fa-fw"></i>&nbsp; xiaotao.shen@ntu.edu.sg</a><br>'
+author: '<br><br>Xiaotao Shen <br> Assistant Professor <br> <a href="http://shen-lab.org"> <i class="fa fa-home fa-fw"></i>&nbsp; shen-lab.org</a><br> <a href="mailto:xiaotao.shen@ntu.edu.sg"><i class="fa fa-paper-plane fa-fw"></i>&nbsp; xiaotao.shen@ntu.edu.sg</a><br>'
 institute: "Lee Kong Chian School of Medicine, NTU Singapore"
 date: '`r Sys.Date()`'
 output: 
@@ -98,14 +98,54 @@ In this course, we will learn how to use R to analyze and visualize data in the 
 
 ---
 
-# RStudio project: download from GitHub
+# Install RStudio
 
-![](https://raw.githubusercontent.com/jaspershen-lab/MD7115-NTU/main/3_materials/images/github.png)
+**Ref:** 
+
+1. https://rstudio-education.github.io/hopr/starting.html
+
+2. https://posit.co/download/rstudio-desktop/
+
+<img src="https://raw.githubusercontent.com/jaspershen-lab/MD7115-NTU/main/3_materials/images/rstudio.png" alt="a graph" width="80%">
+
+
+---
+
+# RStudio project: step 1
 
 Link: https://github.com/jaspershen-lab/MD7115-NTU
 
+<img src="https://raw.githubusercontent.com/jaspershen-lab/MD7115-NTU/main/3_materials/images/step1.png" alt="a graph" width="80%">
 
+---
 
+# RStudio project: step 2
+
+<img src="https://raw.githubusercontent.com/jaspershen-lab/MD7115-NTU/main/3_materials/images/step2.png" alt="a graph" width="80%">
+
+---
+
+# RStudio project: step 3
+
+<img src="https://raw.githubusercontent.com/jaspershen-lab/MD7115-NTU/main/3_materials/images/step3.png" alt="a graph" width="80%">
+
+---
+
+# RStudio project: step 4
+
+<img src="https://raw.githubusercontent.com/jaspershen-lab/MD7115-NTU/main/3_materials/images/step4.png" alt="a graph" width="80%">
+
+---
+
+# RStudio project: step 5
+
+<img src="https://raw.githubusercontent.com/jaspershen-lab/MD7115-NTU/main/3_materials/images/step5.png" alt="a graph" width="80%">
+
+---
+
+# RStudio project: step 6
+
+<img src="https://raw.githubusercontent.com/jaspershen-lab/MD7115-NTU/main/3_materials/images/step6.png" alt="a graph" width="80%">
 
 ---
 
