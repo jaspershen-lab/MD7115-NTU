@@ -106,7 +106,7 @@ In this course, we will learn how to use R to analyze and visualize data in the 
 
 2. https://posit.co/download/rstudio-desktop/
 
-<img src="https://raw.githubusercontent.com/jaspershen-lab/MD7115-NTU/main/3_materials/images/rstudio.png" alt="a graph" width="80%">
+<img src="https://raw.githubusercontent.com/jaspershen-lab/MD7115-NTU/main/3_materials/images/rstudio.png" alt="a graph" width="60%">
 
 
 ---
