@@ -1,7 +1,7 @@
-if (!requireNamespace("microbiomeViz", quietly = TRUE)) {
+if (!require("microbiomeViz", quietly = TRUE)) {
   remotes::install_github("lch14forever/microbiomeViz")
 }
-if (!requireNamespace("phyloseq", quietly = TRUE)) {
+if (!require("phyloseq", quietly = TRUE)) {
   BiocManager::install("phyloseq")
 }
 library(tidyverse)

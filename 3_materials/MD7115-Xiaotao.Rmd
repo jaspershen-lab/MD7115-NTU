@@ -77,13 +77,9 @@ mono_dark(base_color = "#cbf7ed", black_color = "white")
 
 -   **WhatsApp**: +1 5712679283
 
+-   **Address**: Level 3, EMB, NTU
+
 -   **Github Repo**: https://github.com/jaspershen-lab/MD7115-NTU
-
--   **Reference**:
-
-1.  [R for Data Science](https://r4ds.had.co.nz/)
-2.  [R Graphics Cookbook](https://r-graphics.org/)
-3.  [Network Analysis with R](https://www.amazon.com/Network-Analysis-R-Use/dp/3319238822)
 
 ---
 
@@ -97,65 +93,101 @@ In this course, we will learn how to use R to analyze and visualize data in the 
 
 3. How to use R to analyze and visualize them
 
-4. Examples
+4. Examples in publications
+
 
 ---
 
-# Preparation
+# Preparation: general packages 1
 
-We need to install some R packages before the class.
+We need to install some general R packages before the class.
 
-Some packages are in Bionconductor, so we need to install `BiocManager` first.
+Some packages are in Bioconductor and GitHub, so we need to install `BiocManager` and `remotes` first.
 
 ```{r, echo=TRUE, eval = TRUE}
-if (!requireNamespace("BiocManager", quietly = TRUE)){
+# BiocManager is a package manager for Bioconductor
+if (!require("BiocManager", quietly = TRUE)){
 install.packages("BiocManager")
+}
+# remotes is a package manager for GitHub
+if (!require("remotes", quietly = TRUE)){
+install.packages("remotes")
 }
 ```
 
 `tidyverse` is a collection of R packages designed for data science, and it includes `ggplot2`, which is a basic graph package for network and tree in R.
 
 ```{r, echo=TRUE, eval = TRUE}
-if (!requireNamespace("tidyverse", quietly = TRUE)){
+if (!require("tidyverse", quietly = TRUE)){
 install.packages("tidyverse")
 }
 ```
 
 ---
 
-# Preparation
+# Preparation: general packages 2
+
+```{r, echo=TRUE, eval = TRUE}
+##readr to read data (csv, tsv, etc.)
+if (!require("readr", quietly = TRUE)){
+install.packages("readr")
+}
+##tibble to create data.frame
+if (!require("tibble", quietly = TRUE)){
+install.packages("tibble")
+}
+```
+
+---
+
+# Preparation: packages for graph/network
 
 Some specific packages for graph and network.
 
 ```{r, echo=TRUE, eval = TRUE}
-if (!requireNamespace("igraph", quietly = TRUE)){
+# igraph is a package for creating, manipulating, and analyzing network data
+if (!require("igraph", quietly = TRUE)){
 install.packages("igraph")
 }
-if(!requireNamespace("ggraph", quietly = TRUE)){
+# ggraph is a package for creating network visualizations using ggplot2
+if(!require("ggraph", quietly = TRUE)){
 install.packages("ggraph")
 }
-if(!requireNamespace("tidygraph", quietly = TRUE)){
+#tidygraph is a package for tidy manipulation of graph data
+if(!require("tidygraph", quietly = TRUE)){
 install.packages("tidygraph")
 }
-if(!requireNamespace("ggnetwork", quietly = TRUE)){
+# ggnetword is another package for creating network visualizations using ggplot2
+if(!require("ggnetwork", quietly = TRUE)){
 install.packages("ggnetwork")
 }
 ```
 
 ---
 
-# Preparation
+# Preparation: packages for trees
 
 Some specific packages for tree analysis.
 
 ```{r, echo=TRUE, eval = TRUE}
-if(!requireNamespace("ggtree", quietly = TRUE)){
+# microbiomeViz is a package for visualizing microbiome data
+if (!require("microbiomeViz", quietly = TRUE)) {
+  remotes::install_github("lch14forever/microbiomeViz")
+}
+# phyloseq is a package for microbiome data analysis
+if (!require("phyloseq", quietly = TRUE)) {
+  BiocManager::install("phyloseq")
+}
+# ggtree is a package for visualizing phylogenetic trees
+if(!require("ggtree", quietly = TRUE)){
 BiocManager::install("ggtree")  
 }
-if(!requireNamespace("treeio", quietly = TRUE)){
+# treeio is a package for reading and writing phylogenetic tree data
+if(!require("treeio", quietly = TRUE)){
 BiocManager::install("treeio")  
 }
-if(!requireNamespace("ggtreeExtra", quietly = TRUE)){
+# ggtreeExtra is a package for adding extra features to ggtree
+if(!require("ggtreeExtra", quietly = TRUE)){
 BiocManager::install("ggtreeExtra")  
 }
 ```
@@ -179,21 +211,17 @@ A small undirected graph with numbered nodes.
 
 # Biological networks
 
--   Protein-protein interaction networks
+-   **Protein-protein interaction networks**: Protein-protein interaction networks (PPIN) are mathematical representations of the physical contacts between proteins in the cell.
 
--   Metabolic networks
+-   **Metabolic networks**: A metabolic network is the complete set of metabolic and physical processes that determine the physiological and biochemical properties of a cell.
 
--   Correlation network
+-   **Correlation network**: Correlation networks are a way to represent and analyze the relationships between different biological entities (like genes, proteins, or metabolites) based on how their levels or activity change together across various samples or conditions.
 
--   Gene regulatory networks
+-   **Gene regulatory networks**: A gene regulatory network is a collection of molecular regulators that interact with each other and with other substances in the cell to regulate the gene expression levels of mRNA and proteins.
 
--   Disease networks
+-   **Microbe-metabolite network**: A microbe-metabolite network is a network that describes the interactions between microbes and metabolites in a biological system.
 
--   Microbe-metabolite network
-
--   Drug-target networks
-
--   Signaling networks
+-   **Drug-target networks**: A drug-target network is a network that describes the interactions between drugs and their target proteins in the cell.
 
 
 ---
@@ -204,9 +232,10 @@ A small undirected graph with numbered nodes.
 
 Protein-protein interaction networks (PPIN) are mathematical representations of the physical contacts between proteins in the cell. 
 
-* Node: protein
+* Nodes: proteins
 
-* Edge: interaction between proteins
+* Edges: interactions between proteins
+
 ]
 
 .pull-right[
@@ -228,9 +257,11 @@ Protein-protein interaction networks (PPIN) are mathematical representations of 
 A metabolic network is the complete set of metabolic and physical processes that determine the physiological and biochemical properties of a cell. As such, these networks comprise the chemical reactions of metabolism, the metabolic pathways, as well as the regulatory interactions that guide these reactions.
 
 
-* Node: protein (enzyme and metabolites)
+* Nodes: protein (enzyme and metabolites)
 
-* Edge: chemical reactions
+* Edges: chemical reactions
+
+* Database: KEGG, Reactome, HMDB...
 
 ]
 
@@ -269,6 +300,15 @@ Gene Co-expression Networks
 > Zhou et al. Cell Host & Microbe 2024
 
 ]
+
+
+---
+
+# Gene Co-expression Networks
+
+<div style="display: flex; justify-content: center; align-items: center;">
+    <img src="https://raw.githubusercontent.com/jaspershen-lab/MD7115-NTU/main/3_materials/images/genes-10-00962-g001.png" alt="Description of the image" width="100%">
+</div>
 
 
 
@@ -1667,10 +1707,10 @@ The phylogenetics tree of microbiome data.
 # Load libraries
 
 ```{r, echo=TRUE, eval = TRUE}
-if (!requireNamespace("microbiomeViz", quietly = TRUE)) {
+if (!require("microbiomeViz", quietly = TRUE)) {
   remotes::install_github("lch14forever/microbiomeViz")
 }
-if (!requireNamespace("phyloseq", quietly = TRUE)) {
+if (!require("phyloseq", quietly = TRUE)) {
   BiocManager::install("phyloseq")
 }
 library(phyloseq)
