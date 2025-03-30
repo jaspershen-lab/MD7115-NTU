@@ -136,6 +136,14 @@ install.packages("readr")
 if (!require("tibble", quietly = TRUE)){
 install.packages("tibble")
 }
+# shatdowtext is a package for adding shadow to text
+if (!require("shadowtext", quietly = TRUE)){
+install.packages("shadowtext")
+}
+# ggsci is a package for scientific journal color palettes
+if (!require("ggsci", quietly = TRUE)){
+install.packages("ggsci")
+}
 ```
 
 ---
@@ -160,6 +168,10 @@ install.packages("tidygraph")
 # ggnetword is another package for creating network visualizations using ggplot2
 if(!require("ggnetwork", quietly = TRUE)){
 install.packages("ggnetwork")
+}
+# extrafont is a package for using extra fonts in ggplot2
+if (!require(extrafont)) {
+  install.packages("extrafont")
 }
 ```
 
@@ -306,36 +318,39 @@ Gene Co-expression Networks
 
 # Gene Co-expression Networks
 
+Step 1: Expression data. Step 2: DEG. Step 3: Correlation. Step 4: Network
+
 <div style="display: flex; justify-content: center; align-items: center;">
     <img src="https://raw.githubusercontent.com/jaspershen-lab/MD7115-NTU/main/3_materials/images/genes-10-00962-g001.png" alt="Description of the image" width="100%">
 </div>
 
 
+> Delgado-Chaves et al. Genes 2019
 
 ---
 
 # Some important properties of a network
 
-* Degree Distribution:
+* **Degree Distribution**:
 
 The distribution of the number of connections (or "degree") each node has in the network. 
 
-* Shortest Paths:
+* **Shortest Paths**:
 
 The shortest path between two nodes in a network is the smallest number of edges that must be traversed to get from one node to the other.
 
-* Centrality:
+* **Centrality**:
 
 Measures the importance or influence of a node within the network, often based on the number of connections, shortest paths, or intermediate positions. 
 
-* Betweenness Centrality:
+* **Betweenness Centrality**:
 
 A measure of how often a node appears on the shortest path between two other nodes in the network.
 
 
 ---
 
-# Degree Distribution
+# Degree distribution
 
 
 .pull-left[
@@ -365,7 +380,7 @@ This means that a small number of nodes (the "hubs") have a very large number of
 
 In biological network, scale-free networks are common, with a few highly connected nodes (hubs) and many nodes with only a few connections.
 
-These hubs are often important for the overall structure and function of the network.
+**These hubs are often important for the overall structure and function of the network (hub gene/protein/metabolite).**
 
 ]
 
@@ -381,6 +396,8 @@ These hubs are often important for the overall structure and function of the net
 ---
 
 # Graph/Network in R
+
+Some important R packages for graph and network analysis.
 
 * `igraph`
 
@@ -405,8 +422,9 @@ A R package for tidy manipulation of graph data.
 # Create a network: from the data.frame
 
 ```{r, echo=TRUE, eval = TRUE}
-library(igraph)
 library(tidyverse)
+library(tibble)
+library(igraph)
 library(ggraph)
 library(tidygraph)
 
@@ -427,6 +445,21 @@ class(graph)
 graph
 ```
 
+---
+
+# Create a network: from the data.frame
+
+.pull-left[
+```{r, echo=TRUE, eval = FALSE}
+plot(graph)
+```
+]
+
+.pull-right[
+```{r, echo=FALSE, eval = TRUE}
+plot(graph)
+```
+]
 
 ---
 
@@ -452,27 +485,55 @@ edge_data =
 
 # Create a network: from the node and edge data
 
+.pull-left[
 ```{r, echo=TRUE, eval = TRUE}
 node_data
+```
+]
+
+.pull-right[
+```{r, echo=TRUE, eval = TRUE}
 edge_data
 ```
+]
 
 
 ---
 
 # Create a network: from the node and edge data
 
-```{r, echo=TRUE, eval = TRUE}
+.pull-left[
+
+`tbl_graph` is a function from the package `tidygraph` to create a network from the node and edge data.
+
+```{r, echo=TRUE, eval = FALSE}
 graph2 =
   tbl_graph(nodes = node_data, edges = edge_data, directed = FALSE)
 graph2
 ```
+]
+
+.pull.right[
+```{r, echo=FALSE, eval = TRUE}
+graph2 =
+  tbl_graph(nodes = node_data, edges = edge_data, directed = FALSE)
+graph2
+```
+]
+
 
 ---
 
 # Network visualization
 
 .pull-left[
+
+* `ggraph` function is used to visualize the network.
+
+* `geom_edge_xxx` functions are used to add edges to the plot.
+
+* `geom_node_xxx` functions are used to add nodes to the plot.
+
 ```{r, echo=TRUE, eval = FALSE}
 ggraph(graph2, layout = 'kk') +
   geom_edge_link() +
@@ -489,12 +550,22 @@ ggraph(graph2, layout = 'kk') +
 ]
 
 
-
 ---
 
 # Layout
 
 .pull-left[
+
+The layout of one network is the arrangement of nodes and edges in the network. `ggraph` supports different layouts.
+
+* kk: Kamada-Kawai layout
+
+* fr: Fruchterman-Reingold layout
+
+* stress: Stress layout
+
+* Customized layout
+
 ```{r, echo=TRUE, eval = FALSE}
 ggraph(graph2, layout = 'fr') +
   geom_edge_link() +
@@ -516,6 +587,9 @@ ggraph(graph2, layout = 'fr') +
 # Layout
 
 .pull-left[
+
+Stress layout is a layout that tries to minimize the stress of the network. 
+
 ```{r, echo=TRUE, eval = FALSE}
 ggraph(graph2, layout = 'stress') +
   geom_edge_link() +
@@ -538,6 +612,9 @@ ggraph(graph2, layout = 'stress') +
 # Layout
 
 .pull-left[
+
+Linear layout is a layout that arranges the nodes in a straight line.
+
 ```{r, echo=TRUE, eval = FALSE}
 ggraph(graph2, layout = 'linear') +
    geom_edge_arc() +
@@ -560,7 +637,8 @@ ggraph(graph2, layout = 'linear') +
 
 .pull-left[
 ```{r, echo=TRUE, eval = FALSE}
-ggraph(graph2, layout = 'linear', circular = TRUE) +
+ggraph(graph2, layout = 'linear', 
+       circular = TRUE) +
    geom_edge_arc() +
   geom_node_point() +
    coord_fixed()
@@ -569,7 +647,8 @@ ggraph(graph2, layout = 'linear', circular = TRUE) +
 
 .pull-right[
 ```{r, echo=FALSE, eval = TRUE}
-ggraph(graph2, layout = 'linear', circular = TRUE) +
+ggraph(graph2, layout = 'linear', 
+       circular = TRUE) +
    geom_edge_arc() +
   geom_node_point() +
    coord_fixed()
@@ -580,6 +659,7 @@ ggraph(graph2, layout = 'linear', circular = TRUE) +
 # Node and edge attributes
 
 .pull-left[
+
 ```{r, echo=TRUE, eval = FALSE}
 ggraph(graph2, layout = 'linear', circular = TRUE) +
   geom_edge_arc(aes(color = relationship)) +
@@ -604,8 +684,12 @@ ggraph(graph2, layout = 'linear', circular = TRUE) +
 # Add labels
 
 .pull-left[
+
+`geom_node_text` function is used to add labels to the nodes.
+
 ```{r, echo=TRUE, eval = FALSE}
-ggraph(graph2, layout = 'linear', circular = TRUE) +
+ggraph(graph2, layout = 'linear', 
+       circular = TRUE) +
   geom_edge_arc(aes(color = relationship)) +
   geom_node_point(aes(color = sex),
                   size = 5) +
@@ -617,7 +701,8 @@ ggraph(graph2, layout = 'linear', circular = TRUE) +
 
 .pull-right[
 ```{r, echo=FALSE, eval = TRUE}
-ggraph(graph2, layout = 'linear', circular = TRUE) +
+ggraph(graph2, layout = 'linear', 
+       circular = TRUE) +
   geom_edge_arc(aes(color = relationship)) +
   geom_node_point(aes(color = sex),
                   size = 5) +
@@ -792,11 +877,15 @@ graph_data
 # Visualize the graph
 
 .pull-left[
+
+`coord_fixed` (in `ggplot2` package) is used to fix the aspect ratio of the plot.
+
 ```{r, echo=TRUE, eval = FALSE}
 ggraph(graph_data, layout = 'kk') +
   geom_edge_link() +
   geom_node_point(
-  )
+  ) +
+  coord_fixed()
 ```
 ]
 
@@ -805,7 +894,8 @@ ggraph(graph_data, layout = 'kk') +
 ggraph(graph_data, layout = 'kk') +
   geom_edge_link() +
   geom_node_point(
-  )
+  ) +
+  coord_fixed()
 ```
 ]
 
@@ -818,7 +908,8 @@ ggraph(graph_data, layout = 'kk') +
 ggraph(graph_data, layout = 'fr') +
   geom_edge_link() +
   geom_node_point(
-  )
+  ) +
+  coord_fixed()
 ```
 ]
 
@@ -827,7 +918,8 @@ ggraph(graph_data, layout = 'fr') +
 ggraph(graph_data, layout = 'fr') +
   geom_edge_link() +
   geom_node_point(
-  )
+  ) +
+  coord_fixed()
 ```
 ]
 
@@ -993,6 +1085,7 @@ plot
 g = graph_data
 library(igraph)
 library(ggraph)
+library(tidygraph)
 
 V(g)$type = bipartite_mapping(g)$type
 
@@ -1019,6 +1112,7 @@ coords$y[coords$class == "cytokine"] = 0
 coords$y[coords$class == "metabolic_panel"] = 0
 coords$y[coords$class == "total_protein"] = 0
 
+# calculate the x and y coordinates for circle layout
 coords =
   coords %>%
   dplyr::select(x, y) %>%
@@ -1212,22 +1306,13 @@ What's the network?
 # Load libraries
 
 ```{r, echo=TRUE, eval = TRUE}
-if (!require(remotes)) {
-  install.packages("remotes")
-}
-if (!require(r4projects)) {
-  remotes::install_github("jaspershen/r4projects")
-}
-if (!require(simplifyEnrichment)) {
-  BiocManager::install("simplifyEnrichment")
-}
-if (!require(tibble)) {
-  install.packages("tibble")
-}
+library(readr)
 library(ggraph)
 library(tidygraph)
 library(igraph)
 library(tidyverse)
+library(simplifyEnrichment)
+library(tibble)
 ```
 
 
@@ -1245,7 +1330,7 @@ head(pathway_result)
 
 ---
 
-# Compute GO term similarity matrices
+# Compute GO term similarity matrices: BP (Biological Process)
 
 ```{r, echo=TRUE, eval = TRUE}
 bp_sim_matrix =
@@ -1264,7 +1349,7 @@ head(bp_sim_matrix)
 
 ---
 
-# Compute GO term similarity matrices
+# Compute GO term similarity matrices: BP (Biological Process)
 
 ```{r, echo=TRUE, eval = TRUE}
 # Create a unique identifier for each GO term pair
@@ -1284,7 +1369,7 @@ bp_sim_matrix =
 
 ---
 
-# Compute GO term similarity matrices
+# Compute GO term similarity matrices: MF (Molecular Function)
 
 ```{r, echo=TRUE, eval = TRUE}
 mf_sim_matrix =
@@ -1303,7 +1388,7 @@ head(mf_sim_matrix)
 
 ---
 
-# Compute GO term similarity matrices
+# Compute GO term similarity matrices: MF (Molecular Function)
 
 ```{r, echo=TRUE, eval = TRUE}
 name = apply(mf_sim_matrix, 1, function(x) {
@@ -1320,7 +1405,7 @@ mf_sim_matrix =
 
 ---
 
-# Compute GO term similarity matrices
+# Compute GO term similarity matrices: CC (Cellular Component)
 
 ```{r, echo=TRUE, eval = TRUE}
 cc_sim_matrix =
@@ -1339,7 +1424,7 @@ head(cc_sim_matrix)
 
 ---
 
-# Compute GO term similarity matrices
+# Compute GO term similarity matrices: CC (Cellular Component)
 
 ```{r, echo=TRUE, eval = TRUE}
 name = apply(cc_sim_matrix, 1, function(x) {
@@ -1682,13 +1767,131 @@ ggplot2::ggsave(plot,
 
 ---
 
-# Example: Microbiome data
+# What is a tree in biology?
 
 What's the tree?
 
+* **Phylogenetic trees (evolutionary relationships)**
+
+* **Taxonomic trees (classification hierarchies)**
+
+* Gene trees (gene family evolution)
+
+* Species trees (speciation events)
+
+* Population trees (population structure)
+
+
+---
+
+# Taxonomic trees
+
+* Applications in microbiome research: Visualizing community structure, analyzing diversity, tracking taxonomic abundance
+
+---
+
+# Tree terminology
+
+
+* Root (e.g., domain level: Bacteria, Archaea)
+
+* Internal nodes (e.g., phylum, class, order, family, genus)
+
+* Leaf nodes (e.g., species or ASVs/OTUs in microbiome data)
+
+* Branches connecting taxonomic levels
+
+--- 
+
+# Taxonomic Hierarchies in Microbiology
+
+## Standard taxonomic ranks:
+
+* Domain (Bacteria, Archaea)
+
+* Phylum
+
+* Class
+
+* Order
+
+* Family
+
+* Genus
+
+* Species
+
+
+## Microbiome-specific concepts:
+
+* OTUs (Operational Taxonomic Units)
+
+* ASVs (Amplicon Sequence Variants)
+
+* MAGs (Metagenome-Assembled Genomes)
+
+---
+
+# Microbiome Data Structure
+
+## 16S rRNA gene sequencing data:
+
+* Taxonomic assignments based on reference databases
+* Abundance counts at each taxonomic level
+* Often incomplete taxonomic resolution at lower levels
+
+
+## Metagenomic data:
+
+* Broader taxonomic coverage
+
+* Potential for higher resolution
+
+* Integration with functional data
+
+
+## Data formats:
+
+* OTU/ASV tables with taxonomic annotations
+
+* Taxonomic abundance tables at different levels
+
+* BIOM format (Biological Observation Matrix)
+
+---
+
+# Taxonomic Tree Representation
+
+## Key attributes in microbiome taxonomic trees:
+
+* Hierarchical classification
+
+* Relative abundance (often mapped to node/branch size)
+
+* Diversity metrics
+
+* Sample metadata
+
+
+## Common visualization types:
+
+* Traditional hierarchical trees
+
+* Circular/radial dendrograms
+
+* Treemaps
+
+* Sunburst plots
+
+* Heat trees
+
+---
+
+# Example: Microbiome data
+
 .pull-left[
 
-The phylogenetics tree of microbiome data. 
+The taxonomic tree of microbiome data. 
 
 ]
 
@@ -2292,6 +2495,14 @@ ggplot2::ggsave(plot6,
 
 # More references
 
-1.  [Morden Statistics for Morden Biology](https://web.stanford.edu/class/bios221/book/10-chap.html#combining-phylogenetic-trees-into-a-data-analysis)
+* [Morden Statistics for Morden Biology](https://web.stanford.edu/class/bios221/book/)
 
-2.  [Network Analysis with R](https://www.amazon.com/Network-Analysis-R-Use/dp/3319238822)
+* [Introduction to R for Data Science](https://bookdown.org/jdholster1/idsr/)
+
+* [Network Analysis and Visualization with R and igraph](https://kateto.net/netscix2016.html)
+
+* [ggtree: visualization and annotation of phylogenetic trees](https://guangchuangyu.github.io/software/ggtree/)
+
+* [An Intro to Phylogenetic Tree Construction in R](https://fuzzyatelin.github.io/bioanth-stats/module-24/module-24.html)
+
+* [Data Integration, Manipulation and Visualization of Phylogenetic Trees](https://yulab-smu.top/treedata-book/index.html)
