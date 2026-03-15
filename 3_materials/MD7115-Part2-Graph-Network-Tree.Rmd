@@ -1,0 +1,298 @@
+---
+title: "MD7115 Part 2"
+subtitle: "What Are Graph, Network, and Tree?"
+author: '<br><br>Xiaotao Shen <br> Assistant Professor <br> <a href="http://shen-lab.org"> <i class="fa fa-home fa-fw"></i>&nbsp; shen-lab.org</a><br> <a href="mailto:xiaotao.shen@ntu.edu.sg"><i class="fa fa-paper-plane fa-fw"></i>&nbsp; xiaotao.shen@ntu.edu.sg</a><br>'
+institute: "Lee Kong Chian School of Medicine, NTU Singapore"
+date: '`r Sys.Date()`'
+output:
+  xaringan::moon_reader:
+    css: [xaringan-themer.css, my-theme.css]
+    self_contained: true
+    nature:
+      ratio: '16:9'
+      countdown: false
+      titleSlideClass: [center, middle]
+      countIncrementalSlides: false
+    seal: true
+    yolo: false
+---
+
+layout: true
+background-image: url(images/lkc_logo.png)
+background-position: 100% 0%
+background-size: 20%
+
+<div class="my-footer"><span>Xiaotao Shen/www.shen-lab.org</span></div>
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  eval = FALSE,
+  message = FALSE,
+  warning = FALSE,
+  cache = FALSE,
+  dpi = 72
+)
+```
+
+# Three related ideas
+
+| Term | Main idea | Typical use |
+|---|---|---|
+| Graph | Mathematical structure of nodes and edges | Theory and algorithms |
+| Network | Graph with real biological meaning | Data analysis and interpretation |
+| Tree | Hierarchical special graph | Taxonomy, lineage, evolution |
+
+---
+
+# What is a graph?
+
+.pull-left[
+A graph is a set of:
+
+- nodes or vertices
+- edges or links
+
+It tells us which objects are connected.
+]
+
+.pull-right[
+<img src="https://raw.githubusercontent.com/jaspershen-lab/MD7115-NTU/main/3_materials/images/graph.png" alt="Graph" width="70%">
+]
+
+---
+
+# What is a network?
+
+A network is a graph with context.
+
+- Nodes represent real biological entities
+- Edges represent biologically meaningful relationships
+- Attributes add more information to nodes and edges
+
+Examples:
+
+- genes
+- proteins
+- microbes
+- metabolites
+
+---
+
+# What is a tree?
+
+A tree is a graph with a hierarchical structure.
+
+- one connected structure
+- no cycles
+- parent-child relationships
+- useful when ancestry or taxonomy matters
+
+---
+
+# Graph versus network versus tree
+
+- Every tree is a graph
+- Many biological networks are graphs
+- Not every graph is a tree
+- The biological question determines the representation
+
+---
+
+# Biological networks
+
+- Protein-protein interaction network
+- Metabolic network
+- Correlation network
+- Gene regulatory network
+- Microbe-metabolite network
+- Drug-target network
+
+---
+
+# Protein-protein interaction network
+
+.pull-left[
+Nodes:
+
+- proteins
+
+Edges:
+
+- physical or functional interactions
+]
+
+.pull-right[
+<img src="https://raw.githubusercontent.com/jaspershen-lab/MD7115-NTU/main/3_materials/images/ppi_network.png" alt="PPI network" width="100%">
+]
+
+---
+
+# Metabolic network
+
+.pull-left[
+Nodes:
+
+- metabolites
+- enzymes
+
+Edges:
+
+- reactions
+- transformations
+]
+
+.pull-right[
+<img src="https://raw.githubusercontent.com/jaspershen-lab/MD7115-NTU/main/3_materials/images/metabolic_network.png" alt="Metabolic network" width="100%">
+]
+
+---
+
+# Correlation network
+
+.pull-left[
+Nodes:
+
+- genes, proteins, metabolites, microbes
+
+Edges:
+
+- pairwise correlations
+
+Important:
+
+- association, not causation
+]
+
+.pull-right[
+<img src="https://raw.githubusercontent.com/jaspershen-lab/MD7115-NTU/main/3_materials/images/correlation_network.png" alt="Correlation network" width="100%">
+]
+
+---
+
+# Tree examples in biology
+
+- phylogenetic tree
+- taxonomic tree
+- lineage tree
+- cell differentiation tree
+
+Use a tree when hierarchy matters more than arbitrary connectivity.
+
+---
+
+# Core components
+
+For any graph or network, define:
+
+1. Node meaning
+2. Edge meaning
+3. Direction or no direction
+4. Weight or no weight
+5. Attributes attached to nodes and edges
+
+---
+
+# Common node attributes
+
+- type
+- class
+- abundance
+- p-value
+- fold change
+- degree
+- module assignment
+
+---
+
+# Common edge attributes
+
+- weight
+- sign
+- confidence
+- similarity
+- distance
+- interaction type
+
+---
+
+# Important network properties
+
+- Degree: how many edges touch a node
+- Centrality: how important a node is in the network
+- Path: how nodes are connected through the graph
+- Community: subgroup structure
+- Layout: how the graph is drawn on the page
+
+---
+
+# Degree
+
+.pull-left[
+Degree is the number of edges connected to a node.
+
+High-degree nodes are often called hubs.
+]
+
+.pull-right[
+<img src="https://raw.githubusercontent.com/jaspershen-lab/MD7115-NTU/main/3_materials/images/graph.png" alt="Degree" width="70%">
+]
+
+---
+
+# Centrality
+
+Centrality tries to quantify importance.
+
+Examples:
+
+- degree centrality
+- betweenness centrality
+- closeness centrality
+
+Use the measure that matches your biological question.
+
+---
+
+# Community structure
+
+Communities or modules are groups of nodes that are more connected to each other than to the rest of the network.
+
+Biologically, they may represent:
+
+- pathways
+- functional modules
+- co-regulated groups
+
+---
+
+# Layout is not biology
+
+Different layouts can make the same graph look very different.
+
+- force-directed layout
+- circular layout
+- bipartite layout
+- tree layout
+
+The layout improves readability. It does not create evidence.
+
+---
+
+# When to use what
+
+- Use a graph when discussing structure or algorithms
+- Use a network when relationships have biological meaning
+- Use a tree when the data are hierarchical
+
+---
+
+# Transition
+
+Next, we move from concepts to implementation in R.
+
+Main question:
+
+**How do we go from node and edge tables to a useful network figure?**

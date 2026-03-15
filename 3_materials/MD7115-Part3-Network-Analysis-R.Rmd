@@ -1,0 +1,302 @@
+---
+title: "MD7115 Part 3"
+subtitle: "Network Analysis in R"
+author: '<br><br>Xiaotao Shen <br> Assistant Professor <br> <a href="http://shen-lab.org"> <i class="fa fa-home fa-fw"></i>&nbsp; shen-lab.org</a><br> <a href="mailto:xiaotao.shen@ntu.edu.sg"><i class="fa fa-paper-plane fa-fw"></i>&nbsp; xiaotao.shen@ntu.edu.sg</a><br>'
+institute: "Lee Kong Chian School of Medicine, NTU Singapore"
+date: '`r Sys.Date()`'
+output:
+  xaringan::moon_reader:
+    css: [xaringan-themer.css, my-theme.css]
+    self_contained: true
+    nature:
+      ratio: '16:9'
+      countdown: false
+      titleSlideClass: [center, middle]
+      countIncrementalSlides: false
+    seal: true
+    yolo: false
+---
+
+layout: true
+background-image: url(images/lkc_logo.png)
+background-position: 100% 0%
+background-size: 20%
+
+<div class="my-footer"><span>Xiaotao Shen/www.shen-lab.org</span></div>
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  eval = FALSE,
+  message = FALSE,
+  warning = FALSE,
+  cache = FALSE,
+  dpi = 72
+)
+```
+
+# Part 3 goals
+
+In this section, we will:
+
+1. Read node and edge tables
+2. Build a graph object
+3. Compute simple node properties
+4. Compare layouts
+5. Produce one interpretable network plot
+
+---
+
+# Packages
+
+```{r}
+library(readr)
+library(tidyverse)
+library(igraph)
+library(tidygraph)
+library(ggraph)
+library(ggsci)
+library(shadowtext)
+```
+
+---
+
+# Data for the live demo
+
+We will use two local files:
+
+- `2_demo_data/example_node_data.csv`
+- `2_demo_data/example_edge_data.csv`
+
+These represent a ready-to-plot biological network.
+
+---
+
+# Read node data
+
+```{r}
+node_data <- readr::read_csv("2_demo_data/example_node_data.csv")
+head(node_data)
+```
+
+What to check:
+
+- one row per node
+- a unique node identifier
+- useful attributes for color, size, or labels
+
+---
+
+# Read edge data
+
+```{r}
+edge_data <- readr::read_csv("2_demo_data/example_edge_data.csv")
+head(edge_data)
+```
+
+What to check:
+
+- `from` and `to` columns match node IDs
+- edge weights are numeric
+- missing values are handled
+
+---
+
+# Minimal workflow
+
+```text
+node table + edge table
+        ->
+graph object
+        ->
+metrics and attributes
+        ->
+layout
+        ->
+visualization
+```
+
+---
+
+# Build a graph object
+
+```{r}
+graph_data <-
+  tidygraph::tbl_graph(
+    nodes = node_data,
+    edges = edge_data,
+    directed = FALSE
+  )
+
+graph_data
+```
+
+---
+
+# Add degree
+
+```{r}
+graph_data <-
+  graph_data %>%
+  dplyr::mutate(degree = tidygraph::centrality_degree())
+
+graph_data
+```
+
+Interpretation:
+
+- larger degree often means more connected
+- not automatically more important biologically
+
+---
+
+# Basic plot
+
+```{r}
+ggraph(graph_data, layout = "fr") +
+  geom_edge_link(alpha = 0.4) +
+  geom_node_point(size = 3, color = "#2c7fb8") +
+  theme_void()
+```
+
+This is often the first quick quality-control plot.
+
+---
+
+# Add node size and color
+
+```{r}
+ggraph(graph_data, layout = "fr") +
+  geom_edge_link(alpha = 0.4) +
+  geom_node_point(aes(size = degree, fill = class), shape = 21) +
+  scale_fill_brewer(palette = "Set2") +
+  theme_graph()
+```
+
+---
+
+# Add labels selectively
+
+```{r}
+ggraph(graph_data, layout = "fr") +
+  geom_edge_link(alpha = 0.4) +
+  geom_node_point(aes(size = degree, fill = class), shape = 21) +
+  geom_node_text(aes(label = ifelse(degree >= 3, mol_name, NA)), repel = TRUE, size = 3) +
+  scale_fill_brewer(palette = "Set2") +
+  theme_graph()
+```
+
+Only label what helps interpretation.
+
+---
+
+# Compare layouts
+
+```{r}
+ggraph(graph_data, layout = "fr") +
+  geom_edge_link(alpha = 0.3) +
+  geom_node_point(aes(size = degree, fill = class), shape = 21) +
+  theme_graph()
+```
+
+```{r}
+ggraph(graph_data, layout = "circle") +
+  geom_edge_arc(alpha = 0.3) +
+  geom_node_point(aes(size = degree, fill = class), shape = 21) +
+  theme_graph()
+```
+
+---
+
+# Layout choice
+
+Choose layout based on the question:
+
+- `fr`: general-purpose exploratory plot
+- `circle`: emphasizes ordering or grouping
+- `bipartite`: two node types
+- `manual`: best when you want full control
+
+---
+
+# Example of a manual strategy
+
+In some biological datasets, we want different classes to occupy different regions.
+
+Examples:
+
+- wearable versus omics
+- host versus microbiome
+- source versus target
+
+That is a visualization decision, not a new analysis method.
+
+---
+
+# Final network plot
+
+```{r}
+plot <-
+  ggraph(graph_data, layout = "fr") +
+  geom_edge_link(aes(width = abs(lagged_cor), color = lagged_cor), alpha = 0.5) +
+  geom_node_point(aes(fill = class, size = degree), shape = 21, alpha = 0.9) +
+  geom_node_text(aes(label = ifelse(degree >= 3, mol_name, NA), color = class), repel = TRUE, size = 3) +
+  scale_edge_width_continuous(range = c(0.2, 1.5)) +
+  scale_edge_color_gradient2(low = "#3B4992FF", mid = "white", high = "#EE0000FF") +
+  theme_graph()
+
+plot
+```
+
+---
+
+# Optional extension: modules
+
+```{r}
+graph_data <-
+  graph_data %>%
+  dplyr::mutate(module = as.factor(group_louvain()))
+```
+
+Possible uses:
+
+- functional clustering
+- pathway-level interpretation
+- picking representative labels
+
+---
+
+# Second network example
+
+A GO similarity network can be built from:
+
+1. enriched GO terms
+2. pairwise semantic similarity
+3. thresholded edge list
+4. graph construction
+5. community detection
+
+We will not live-code the full pipeline today, but this is the same network logic.
+
+---
+
+# What matters most
+
+- define nodes clearly
+- define edges clearly
+- check ID consistency
+- choose layout for readability
+- label sparingly
+- interpret the biology, not only the aesthetics
+
+---
+
+# Transition
+
+We now switch from general networks to trees.
+
+Question:
+
+**What changes when the structure is hierarchical instead of general?**

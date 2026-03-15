@@ -1,0 +1,262 @@
+---
+title: "MD7115 Part 4"
+subtitle: "Tree Visualization in Biology"
+author: '<br><br>Xiaotao Shen <br> Assistant Professor <br> <a href="http://shen-lab.org"> <i class="fa fa-home fa-fw"></i>&nbsp; shen-lab.org</a><br> <a href="mailto:xiaotao.shen@ntu.edu.sg"><i class="fa fa-paper-plane fa-fw"></i>&nbsp; xiaotao.shen@ntu.edu.sg</a><br>'
+institute: "Lee Kong Chian School of Medicine, NTU Singapore"
+date: '`r Sys.Date()`'
+output:
+  xaringan::moon_reader:
+    css: [xaringan-themer.css, my-theme.css]
+    self_contained: true
+    nature:
+      ratio: '16:9'
+      countdown: false
+      titleSlideClass: [center, middle]
+      countIncrementalSlides: false
+    seal: true
+    yolo: false
+---
+
+layout: true
+background-image: url(images/lkc_logo.png)
+background-position: 100% 0%
+background-size: 20%
+
+<div class="my-footer"><span>Xiaotao Shen/www.shen-lab.org</span></div>
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  eval = FALSE,
+  message = FALSE,
+  warning = FALSE,
+  cache = FALSE,
+  dpi = 72
+)
+```
+
+# Part 4 goals
+
+In this section, we will:
+
+1. Understand what a biological tree represents
+2. Read a microbiome phyloseq object
+3. Generate a basic tree
+4. Add taxonomic or phenotypic annotations
+5. Interpret a layered tree figure
+
+---
+
+# Why trees matter in biology
+
+- taxonomy is hierarchical
+- evolutionary relationships are hierarchical
+- lineage relationships are hierarchical
+- tree plots let us show structure and annotation together
+
+---
+
+# Example: microbiome taxonomic tree
+
+.pull-left[
+Nodes can represent:
+
+- kingdom
+- phylum
+- class
+- order
+- family
+- genus
+]
+
+.pull-right[
+<img src="https://raw.githubusercontent.com/jaspershen-lab/MD7115-NTU/main/3_materials/images/cell_host_microbe.png" alt="Microbiome tree" width="80%">
+]
+
+---
+
+# Packages
+
+```{r}
+library(readr)
+library(tidyverse)
+library(phyloseq)
+library(microbiomeViz)
+library(ggtree)
+library(ggtreeExtra)
+library(ggnewscale)
+```
+
+---
+
+# Data for the tree showcase
+
+```{r}
+personalized_score <- readr::read_csv("2_demo_data/personalized_score.csv")
+load("2_demo_data/microbiome_data.RData")
+```
+
+Inputs:
+
+- one `phyloseq` object
+- one table of additional metadata or scores
+
+---
+
+# What is inside a phyloseq object?
+
+A `phyloseq` object may contain:
+
+- OTU or ASV abundance table
+- taxonomy table
+- sample metadata
+- phylogenetic tree
+
+This makes it convenient for integrated microbiome analysis.
+
+---
+
+# Parse the tree
+
+```{r}
+tree <-
+  microbiomeViz::parsePhyloseq(
+    physeq = microbiome_data,
+    use_abundance = FALSE,
+    node.size.scale = 0,
+    node.size.offset = 0
+  )
+
+tree
+```
+
+---
+
+# Draw a basic tree
+
+```{r}
+raw_plot <-
+  tree.backbone(
+    tree = tree,
+    size = 0.3,
+    shape = 16,
+    layout = "circular",
+    fill = "black",
+    color = "black"
+  )
+
+raw_plot
+```
+
+---
+
+# Add taxonomic node classes
+
+```{r}
+raw_plot$data$nodeClass2 <- as.character(raw_plot$data$nodeClass)
+raw_plot$data$nodeClass2[is.na(raw_plot$data$nodeClass2)] <- "Root"
+raw_plot$data$nodeClass2[raw_plot$data$nodeClass2 == "k"] <- "Kingdom"
+raw_plot$data$nodeClass2[raw_plot$data$nodeClass2 == "p"] <- "Phylum"
+raw_plot$data$nodeClass2[raw_plot$data$nodeClass2 == "c"] <- "Class"
+raw_plot$data$nodeClass2[raw_plot$data$nodeClass2 == "o"] <- "Order"
+raw_plot$data$nodeClass2[raw_plot$data$nodeClass2 == "f"] <- "Family"
+raw_plot$data$nodeClass2[raw_plot$data$nodeClass2 == "g"] <- "Genus"
+```
+
+---
+
+# Add node layers
+
+```{r}
+raw_plot +
+  ggtree::geom_point2(aes(color = nodeClass2), size = 1.2, show.legend = FALSE)
+```
+
+This immediately makes the hierarchy easier to read.
+
+---
+
+# Add labels for the tips
+
+```{r}
+raw_plot$data$label2 <-
+  raw_plot$data$label %>%
+  stringr::str_split("__") %>%
+  purrr::map_chr(~ ifelse(length(.x) >= 2, .x[2], NA_character_))
+
+raw_plot$data$label2[as.character(raw_plot$data$nodeClass) != "g"] <- NA
+```
+
+Tip labels should be selective and legible.
+
+---
+
+# Add external annotation
+
+Typical annotations for a tree include:
+
+- abundance
+- enrichment score
+- body site
+- significance mark
+- taxonomy color
+
+This is where `ggtreeExtra` becomes very useful.
+
+---
+
+# Prepare a simple annotation table
+
+```{r}
+annotation_df <-
+  personalized_score %>%
+  dplyr::select(genus, class, fc1) %>%
+  tidyr::pivot_wider(names_from = class, values_from = fc1)
+
+head(annotation_df)
+```
+
+---
+
+# Add a heatmap layer
+
+```{r}
+ggtree::gheatmap(
+  p = raw_plot,
+  data = annotation_df,
+  offset = 0.2,
+  width = 0.2,
+  colnames = TRUE
+)
+```
+
+Conceptually, this is still one tree plus one aligned metadata panel.
+
+---
+
+# A good tree figure usually has three parts
+
+1. backbone structure
+2. taxonomic or lineage annotation
+3. external data layer
+
+If all three are clear, the plot becomes biologically useful.
+
+---
+
+# What students should understand
+
+- the tree encodes hierarchy
+- tip-level metadata can be aligned to the tree
+- added layers should support interpretation
+- more layers do not always mean a better figure
+
+---
+
+# Transition
+
+We have now built one network view and one tree view.
+
+The final step is to discuss interpretation and common mistakes.
