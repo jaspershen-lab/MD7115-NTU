@@ -1,83 +1,81 @@
-# BiocManager is a package manager for Bioconductor
-if (!require("BiocManager", quietly = TRUE)){
-  install.packages("BiocManager")
+# MD7115 package installer
+# Run this script once before class.
+
+options(repos = c(CRAN = "https://cloud.r-project.org"))
+
+install_if_missing_cran <- function(pkgs) {
+  missing_pkgs <- pkgs[!vapply(pkgs, requireNamespace, logical(1), quietly = TRUE)]
+  if (length(missing_pkgs) > 0) {
+    install.packages(missing_pkgs, dependencies = TRUE)
+  }
 }
 
-####load required packages
-###remotes
-if (!require(remotes)) {
-  install.packages("remotes")
+install_if_missing_bioc <- function(pkgs) {
+  missing_pkgs <- pkgs[!vapply(pkgs, requireNamespace, logical(1), quietly = TRUE)]
+  if (length(missing_pkgs) > 0) {
+    BiocManager::install(missing_pkgs, ask = FALSE, update = FALSE)
+  }
 }
 
-if (!require("tidyverse", quietly = TRUE)){
-  install.packages("tidyverse")
+install_if_missing_github <- function(pkg, repo) {
+  if (!requireNamespace(pkg, quietly = TRUE)) {
+    remotes::install_github(repo, dependencies = TRUE, upgrade = "never")
+  }
 }
 
-##readr to read data (csv, tsv, etc.)
-if (!require("readr", quietly = TRUE)){
-  install.packages("readr")
-}
-##tibble to create data.frame
-if (!require("tibble", quietly = TRUE)){
-  install.packages("tibble")
-}
-# shatdowtext is a package for adding shadow to text
-if (!require("shadowtext", quietly = TRUE)){
-  install.packages("shadowtext")
-}
-# ggsci is a package for scientific journal color palettes
-if (!require("ggsci", quietly = TRUE)){
-  install.packages("ggsci")
+cat("Step 1/4: installing package managers\n")
+install_if_missing_cran(c("BiocManager", "remotes"))
+
+cat("Step 2/4: installing CRAN packages\n")
+cran_packages <- c(
+  "tidyverse",
+  "readr",
+  "tibble",
+  "shadowtext",
+  "ggsci",
+  "igraph",
+  "ggraph",
+  "tidygraph",
+  "ggnetwork",
+  "extrafont",
+  "ggnewscale",
+  "RColorBrewer"
+)
+install_if_missing_cran(cran_packages)
+
+cat("Step 3/4: installing Bioconductor packages\n")
+bioc_packages <- c(
+  "phyloseq",
+  "ggtree",
+  "treeio",
+  "ggtreeExtra",
+  "simplifyEnrichment"
+)
+install_if_missing_bioc(bioc_packages)
+
+cat("Step 4/4: installing GitHub packages\n")
+install_if_missing_github("microbiomeViz", "lch14forever/microbiomeViz")
+install_if_missing_github("r4projects", "jaspershen/r4projects")
+
+required_packages <- c(
+  "BiocManager",
+  "remotes",
+  cran_packages,
+  bioc_packages,
+  "microbiomeViz",
+  "r4projects"
+)
+
+missing_after_install <- required_packages[
+  !vapply(required_packages, requireNamespace, logical(1), quietly = TRUE)
+]
+
+cat("\nInstallation check:\n")
+if (length(missing_after_install) == 0) {
+  cat("All required packages are installed.\n")
+} else {
+  cat("These packages still need attention:\n")
+  print(missing_after_install)
 }
 
-# igraph is a package for creating, manipulating, and analyzing network data
-if (!require("igraph", quietly = TRUE)){
-  install.packages("igraph")
-}
-# ggraph is a package for creating network visualizations using ggplot2
-if(!require("ggraph", quietly = TRUE)){
-  install.packages("ggraph")
-}
-#tidygraph is a package for tidy manipulation of graph data
-if(!require("tidygraph", quietly = TRUE)){
-  install.packages("tidygraph")
-}
-# ggnetword is another package for creating network visualizations using ggplot2
-if(!require("ggnetwork", quietly = TRUE)){
-  install.packages("ggnetwork")
-}
-# extrafont is a package for using extra fonts in ggplot2
-if (!require(extrafont)) {
-  install.packages("extrafont")
-}
-
-# microbiomeViz is a package for visualizing microbiome data
-if (!require("microbiomeViz", quietly = TRUE)) {
-  remotes::install_github("lch14forever/microbiomeViz")
-}
-# phyloseq is a package for microbiome data analysis
-if (!require("phyloseq", quietly = TRUE)) {
-  BiocManager::install("phyloseq")
-}
-# ggtree is a package for visualizing phylogenetic trees
-if(!require("ggtree", quietly = TRUE)){
-  BiocManager::install("ggtree")  
-}
-# treeio is a package for reading and writing phylogenetic tree data
-if(!require("treeio", quietly = TRUE)){
-  BiocManager::install("treeio")  
-}
-# ggtreeExtra is a package for adding extra features to ggtree
-if(!require("ggtreeExtra", quietly = TRUE)){
-  BiocManager::install("ggtreeExtra")  
-}
-
-####r4projects
-if (!require(r4projects)) {
-  remotes::install_github("jaspershen/r4projects")
-}
-
-if (!require(simplifyEnrichment)) {
-  BiocManager::install("simplifyEnrichment")
-}
-
+cat("\nYou can now open the project and run the class examples.\n")
