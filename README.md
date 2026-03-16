@@ -2,41 +2,27 @@
 
 Teaching materials for `MD7115: R for Graph, Network and Trees` at NTU Singapore.
 
-## Course overview
+## Overview
 
-This course introduces graph, network, and tree concepts with a focus on biomedical research applications. The class is designed for a 3-hour session and combines conceptual explanations with hands-on R examples.
+This repository contains slides, example scripts, and demo datasets for a 3-hour teaching session on graph, network, and tree analysis in R, with applications in biomedical research.
 
-Main topics:
+The course covers:
 
-- graph, network, and tree concepts
-- biomedical examples of network analysis
-- network visualization in R
-- tree visualization in biology
-- interpretation, common pitfalls, and take-home messages
+- basic concepts of graphs, networks, and trees
+- biological examples of network structures
+- network analysis and visualization in R
+- tree visualization for microbiome and related biological data
+- interpretation, limitations, and common pitfalls
 
-## Course structure
+## Main teaching material
 
-The teaching materials are organized into five parts.
+The primary slide deck is:
 
-1. `Part 1: Introduction and setup` (15-20 min)
-2. `Part 2: What are graph, network, and tree?` (25-30 min)
-3. `Part 3: Network analysis in R` (60-70 min)
-4. `Part 4: Tree visualization in biology` (35-40 min)
-5. `Part 5: Interpretation, pitfalls, and take-home messages` (10-15 min)
+- `3_materials/MD7115-Xiaotao.Rmd`
 
-## Main slide files
+The rendered slide deck is:
 
-The new modular course slides are in `3_materials/`:
-
-- `MD7115-Part1-Introduction-Setup.Rmd`
-- `MD7115-Part2-Graph-Network-Tree.Rmd`
-- `MD7115-Part3-Network-Analysis-R.Rmd`
-- `MD7115-Part4-Tree-Visualization-Biology.Rmd`
-- `MD7115-Part5-Interpretation-Pitfalls.Rmd`
-
-The original full slide deck is also retained:
-
-- `MD7115-Xiaotao.Rmd`
+- `3_materials/MD7115-Xiaotao.html`
 
 ## Repository structure
 
@@ -52,41 +38,55 @@ MD7115-NTU/
 │   ├── example_node_data.csv
 │   ├── microbiome_data.RData
 │   ├── pathway_result.csv
+│   ├── pathway_result.rda
 │   └── personalized_score.csv
 ├── 3_materials/
-│   ├── MD7115-Part1-Introduction-Setup.Rmd
-│   ├── MD7115-Part2-Graph-Network-Tree.Rmd
-│   ├── MD7115-Part3-Network-Analysis-R.Rmd
-│   ├── MD7115-Part4-Tree-Visualization-Biology.Rmd
-│   ├── MD7115-Part5-Interpretation-Pitfalls.Rmd
-│   └── MD7115-Xiaotao.Rmd
+│   ├── MD7115-Xiaotao.Rmd
+│   ├── MD7115-Xiaotao.html
+│   ├── images/
+│   ├── libs/
+│   ├── my-theme.css
+│   └── xaringan-themer.css
 └── MD7115-NTU.Rproj
 ```
 
+## Files for students
+
+Before class, students should mainly use:
+
+- `1_code/0_install_packages.R` to install required packages
+- `MD7115-NTU.Rproj` to open the project in RStudio
+- `3_materials/MD7115-Xiaotao.html` or `3_materials/MD7115-Xiaotao.Rmd` for the teaching slides
+
+## Example scripts
+
+The `1_code/` folder contains scripts used for demonstration and follow-up practice:
+
+- `1_example1.R`: network visualization example
+- `2_example2.R`: GO similarity network example
+- `3_example.R`: tree visualization example
+
+## Demo data
+
+The `2_demo_data/` folder contains local data used in class so that examples can be run without relying on internet access during teaching.
+
 ## Before class
 
-Students should complete the following steps before attending class:
+Recommended preparation:
 
-1. Install R and RStudio
-2. Download or clone this repository
-3. Open `MD7115-NTU.Rproj`
-4. Run `1_code/0_install_packages.R`
-
-## Code and data
-
-The course uses local data files stored in `2_demo_data/` so that class examples can run without depending on external downloads during teaching.
-
-The code files in `1_code/` provide standalone examples that can be used before, during, or after class.
+1. Install R
+2. Install RStudio
+3. Download or clone this repository
+4. Open `MD7115-NTU.Rproj`
+5. Run `1_code/0_install_packages.R`
 
 ## Rendering slides
 
-To render a slide deck in R:
+To render the main slide deck in R:
 
 ```r
-rmarkdown::render("3_materials/MD7115-Part1-Introduction-Setup.Rmd")
+rmarkdown::render("3_materials/MD7115-Xiaotao.Rmd")
 ```
-
-Replace the file name with any of the other `.Rmd` files in `3_materials/`.
 
 ## Contact
 
