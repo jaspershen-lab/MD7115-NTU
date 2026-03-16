@@ -5,7 +5,7 @@
 # ===================================================
 
 # Load required packages
-library(r4projects)      # For project management functions
+# library(r4projects)      # For project management functions
 library(simplifyEnrichment)  # For enrichment analysis simplification
 library(tidyverse)       # Collection of data manipulation packages
 library(tibble)          # Enhanced data frames
@@ -20,7 +20,7 @@ library(extrafont)       # For additional fonts
 
 # Set working directory to the root of the project
 # Using r4projects functionality to ensure consistent path handling
-setwd(r4projects::get_project_wd())
+# setwd(r4projects::get_project_wd())
 rm(list = ls())
 
 ####################################################
@@ -49,7 +49,7 @@ head(pathway_result)
 bp_sim_matrix <-
   simplifyEnrichment::GO_similarity(go_id = pathway_result$ID[pathway_result$ONTOLOGY == "BP"],
                                     ont = "BP",
-                                    measure = "Wang") %>%
+                                    measure = "Sim_Wang_edge_2012") %>%
   as.data.frame() %>%
   # Convert row names to a column for easier manipulation
   tibble::rownames_to_column(var = "name1") %>%
@@ -84,7 +84,7 @@ bp_sim_matrix <-
 mf_sim_matrix <-
   simplifyEnrichment::GO_similarity(go_id = pathway_result$ID[pathway_result$ONTOLOGY == "MF"],
                                     ont = "MF",
-                                    measure = "Wang") %>%
+                                    measure = "Sim_Wang_edge_2012") %>%
   as.data.frame() %>%
   tibble::rownames_to_column(var = "name1") %>%
   tidyr::pivot_longer(cols = -name1,
@@ -111,7 +111,7 @@ mf_sim_matrix <-
 cc_sim_matrix <-
   simplifyEnrichment::GO_similarity(go_id = pathway_result$ID[pathway_result$ONTOLOGY == "CC"],
                                     ont = "CC",
-                                    measure = "Wang") %>%
+                                    measure = "Sim_Wang_edge_2012") %>%
   as.data.frame() %>%
   tibble::rownames_to_column(var = "name1") %>%
   tidyr::pivot_longer(cols = -name1,
