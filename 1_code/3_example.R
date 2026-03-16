@@ -5,7 +5,7 @@
 # ===================================================
 
 # Load required packages
-library(r4projects)      # For project management functions
+# library(r4projects)      # For project management functions
 library(simplifyEnrichment)  # For enrichment analysis simplification
 library(tidyverse)       # Collection of data manipulation packages
 library(tibble)          # Enhanced data frames
@@ -23,7 +23,7 @@ library(microbiomeViz)   # Visualization for microbiome data
 library(phyloseq)        # Analysis of microbiome census data
 
 # Set working directory to the root of the project
-setwd(r4projects::get_project_wd())
+# setwd(r4projects::get_project_wd())
 
 # Clear the workspace
 rm(list = ls())
